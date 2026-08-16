@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GeneralToolCard from '../components/GeneralToolCard.astro';
+import { marketingGroups, marketingTools } from '../data/calculatorCatalog';
+---
+<Layout title="Free Marketing & Revenue Calculators" description="Free ROAS, ad spend, CAC, LTV, CPC, CPM, CPA, conversion rate and profit margin calculators for marketers.">
+  <section class="shell py-14 sm:py-20">
+    <p class="eyebrow">10 marketing & revenue calculators</p><h1 class="display mt-4 max-w-3xl text-4xl sm:text-5xl">Turn campaign data into decisions.</h1>
+    <p class="mt-5 max-w-2xl text-lg leading-8 text-[var(--muted)]">Calculate advertising efficiency, acquisition economics, conversion performance and profit with 10 focused tools for marketers and business owners.</p>
+    <label class="panel mt-8 block max-w-xl p-1.5"><span class="sr-only">Search marketing calculators</span><input class="control border-0 shadow-none" type="search" placeholder="Search ROAS, CAC, CPC, margin..." data-catalog-search /></label>
+  </section>
+  <section class="shell border-t pb-20 pt-10" style="border-color:var(--line)" data-catalog>
+    {marketingGroups.map((group) => <div class="catalog-group mb-12"><h2 class="mb-4 text-lg font-semibold">{group}</h2><div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{marketingTools.filter((tool) => tool.group === group).map((tool) => <GeneralToolCard tool={tool} />)}</div></div>)}
+    <p class="hidden rounded-xl border bg-[var(--panel)] p-6 text-center text-sm text-[var(--muted)]" data-empty>No matching calculator found.</p>
+    <div class="prose-copy mx-auto mt-16 max-w-3xl border-t pt-12" style="border-color:var(--line)"><h2>How to use marketing metrics responsibly</h2><p>Advertising metrics are most useful when definitions stay consistent. Use spend, revenue, clicks, impressions, customers and conversions from the same reporting period. Check whether your platform reports click-through, view-through or modeled conversions, and use the same attribution window when comparing campaigns.</p><p>ROAS measures attributed revenue efficiency, while CAC and CPA measure acquisition cost. CPC and CPM describe media delivery. Conversion rate describes funnel behavior. LTV and profit margin add business context. No single metric proves incrementality or profitability, so review the connected measures together before increasing a budget.</p></div>
+  </section>
+</Layout>
+<script>const input=document.querySelector<HTMLInputElement>('[data-catalog-search]');const empty=document.querySelector<HTMLElement>('[data-empty]');input?.addEventListener('input',()=>{let visible=0;document.querySelectorAll<HTMLElement>('[data-catalog] a').forEach(card=>{const match=card.textContent?.toLowerCase().includes(input.value.trim().toLowerCase())??false;card.classList.toggle('hidden',!match);if(match)visible++});document.querySelectorAll<HTMLElement>('.catalog-group').forEach(group=>group.classList.toggle('hidden',!group.querySelector('a:not(.hidden)')));empty?.classList.toggle('hidden',visible>0)});</script>

@@ -1,0 +1,81 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Calculator from '../components/Calculator.astro';
+import ToolCard from '../components/ToolCard.astro';
+import { getRelatedTools, tools, type Tool } from '../data/tools';
+import { getRunningFaqs } from '../data/runningContent';
+
+export function getStaticPaths() { return tools.map((tool) => ({ params: { slug: tool.slug }, props: { tool } })); }
+const { tool } = Astro.props as { tool: Tool };
+const related = getRelatedTools(tool);
+const isTraining = ['training', 'effort'].includes(tool.kind);
+const isSpecial = ['swim', 'treadmill', 'runwalk', 'grade'].includes(tool.kind);
+const faqs = getRunningFaqs(tool.slug);
+const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((faq) => ({ '@type': 'Question', name: faq.question, acceptedAnswer: { '@type': 'Answer', text: faq.answer } })) };
+const softwareSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  'name': tool.name,
+  'operatingSystem': 'All',
+  'applicationCategory': 'FitnessApplication',
+  'browserRequirements': 'Requires HTML5. Requires JavaScript.',
+  'offers': {
+    '@type': 'Offer',
+    'price': '0',
+    'priceCurrency': 'USD'
+  }
+};
+---
+<Layout title={`${tool.name} - Free & Accurate`} description={tool.description}>
+  <div class="shell py-5 text-sm text-[var(--muted)]"><a class="hover:text-[var(--color-primary)]" href="/">Calculators</a> <span class="mx-2">/</span> {tool.shortName}</div>
+  <section class="shell grid gap-10 pb-16 pt-7 lg:grid-cols-[minmax(0,.85fr)_minmax(400px,1fr)] lg:items-start lg:gap-16">
+    <div class="pt-2">
+      <p class="eyebrow">{tool.category} calculator</p>
+      <h1 class="display mt-4 text-[clamp(2.5rem,6vw,4rem)]">{tool.name}</h1>
+      <p class="mt-5 max-w-xl text-lg leading-8 text-[var(--muted)]">{tool.intro}</p>
+      <div class="mt-7 grid max-w-md gap-3 text-sm text-[var(--muted)]">
+        <p class="flex items-center gap-2"><span class="grid size-5 place-items-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">✓</span> Instant, accurate result</p>
+        <p class="flex items-center gap-2"><span class="grid size-5 place-items-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">✓</span> Inputs stay in your browser</p>
+        <p class="flex items-center gap-2"><span class="grid size-5 place-items-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">✓</span> Works on mobile and desktop</p>
+      </div>
+    </div>
+    <Calculator tool={tool} />
+  </section>
+
+  <article class="shell border-t py-16 sm:py-20" style="border-color:var(--line)">
+    <div class="prose-copy mx-auto max-w-3xl">
+      <h2>How to use this {tool.name.toLowerCase()}</h2>
+      <p>Enter the requested distance, time, pace or speed, then select <strong>Calculate result</strong>. The calculator preserves seconds before rounding the displayed answer, which avoids the errors that build up when pace is rounded too early. This is especially useful for {tool.useCase}.</p>
+      {tool.kind === 'pace' && <p>Distance is converted to kilometers internally, elapsed time is converted to seconds, and pace is calculated as total seconds divided by distance. The same value is then converted to minutes per mile using 1 mile = 1.609344 kilometers. Cumulative splits assume the pace remains even.</p>}
+      {tool.kind === 'fixed' && <p>The official race distance is already set, so only a finish time is needed. Pace equals total time divided by {tool.distanceKm} kilometers. The result includes pace per kilometer, pace per mile, average speed and checkpoints that add up to the exact entered finish time.</p>}
+      {tool.kind === 'finish' && <p>The calculator converts the selected pace to seconds per kilometer, multiplies it by the chosen distance and formats the result as hours, minutes and seconds. Switching between mile and kilometer units changes the conversion, not the underlying effort.</p>}
+      {tool.kind === 'swim' && <p>Swim pace is normalized to 100 meters or 100 yards. Total elapsed seconds are divided by distance and multiplied by 100. Keep the unit consistent with the pool or measured course; meters and yards are not interchangeable.</p>}
+      {tool.kind === 'treadmill' && <p>Pace is the inverse of speed. At 10 km/h, for example, one kilometer takes six minutes. The tool converts mph to km/h when needed and shows both pace systems, making it easier to follow an outdoor plan indoors.</p>}
+      {tool.kind === 'runwalk' && <p>The blended result is weighted by distance, not by simply averaging the two pace values. It calculates the distance covered during each running and walking segment, adds those distances, then divides total cycle time by total distance.</p>}
+      {tool.kind === 'grade' && <p>The estimate uses a published-style polynomial energy-cost curve for slope. It compares the modeled cost at the entered gradient with level running, then expresses the effort as an equivalent flat pace. Very steep, technical or loose terrain will reduce accuracy.</p>}
+      {isTraining && <p>The estimate begins with average pace from a recent 5K and applies a purpose-specific range. It is intentionally a range rather than a single mandatory number. A 5K result should be recent, accurately measured and representative of current fitness.</p>}
+
+      <h2>How to interpret your result</h2>
+      <p>Treat the displayed number as a planning reference. Pace describes an average and does not show whether the effort was evenly distributed. Two runners can finish in the same time while using very different strategies. Review lap data and perceived effort alongside the final average whenever those details are available.</p>
+      <p>{isTraining ? 'Training intensity should match the purpose of the session. Easy and long runs support aerobic volume; tempo and threshold work add controlled intensity. Slowing down because of heat, hills or fatigue is not a failed workout when the intended effort stays correct.' : isSpecial ? 'Specialized calculations depend on consistent inputs and conditions. Equipment calibration, pool length, surface, slope, turns and transitions can all move the real result away from a mathematical estimate.' : 'For a race goal, compare the target with recent training before relying on it. A small negative split can be safer than banking time early, because a pace that feels effortless in the opening minutes may become disproportionately expensive later.'}</p>
+
+      <h2>Accuracy and useful adjustments</h2>
+      <p>CalcFino uses full-precision conversion factors and rounds only the final display. Your input quality remains the largest source of uncertainty. GPS distance can drift around buildings, under trees and on tight tracks. Certified race distances, calibrated treadmills and correctly measured pools provide stronger inputs.</p>
+      <p>Weather and terrain change sustainable pace even when fitness is unchanged. Heat increases cooling demand, wind changes energy cost and elevation adds muscular load. Use the result to establish a baseline, then adjust with experience and effort. Do not use a calculator to override pain, illness or medical guidance.</p>
+
+      <h2>Frequently asked questions</h2>
+      <div class="mt-5 grid gap-3">
+        {faqs.map((faq) => (
+          <details class="rounded-xl border bg-[var(--panel)] p-5" style="border-color:var(--line)">
+            <summary class="cursor-pointer font-semibold text-[var(--text)]">{faq.question}</summary>
+            <p class="mb-0 mt-3 text-base">{faq.answer}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </article>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(softwareSchema)} />
+
+  <section class="shell border-t py-16" style="border-color:var(--line)"><p class="eyebrow">Continue planning</p><h2 class="display mt-3 text-3xl">Related calculators</h2><div class="mt-7 grid gap-4 md:grid-cols-3">{related.map((item) => <ToolCard tool={item} index={tools.indexOf(item)} />)}</div></section>
+</Layout>

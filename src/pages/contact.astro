@@ -1,0 +1,12 @@
+---
+import InfoLayout from '../layouts/InfoLayout.astro';
+const contactEmail = import.meta.env.PUBLIC_CONTACT_EMAIL;
+---
+<InfoLayout title="Contact" description="Contact CalcFino Tools about calculator feedback, corrections, privacy or partnerships.">
+  <p>Found an incorrect result, unclear explanation or accessibility problem? Useful reports include the calculator name, the values entered, the expected result and the device or browser used.</p>
+  <h2>Get in touch</h2>
+  <p>Email us at <a class="font-bold underline" href="mailto:contact@calcfino.com">contact@calcfino.com</a>. Please do not send sensitive medical, financial or account information.</p>
+  {contactEmail && <p>For partnership or business inquiries, you can also reach us at <a class="font-bold underline" href={`mailto:${contactEmail}`}>{contactEmail}</a>.</p>}
+  <h2>What we can help with</h2><p>We welcome formula corrections, feature suggestions, broken-link reports, privacy questions and partnership inquiries. CalcFino cannot provide individual medical guidance or personalized coaching plans.</p>
+  <h2>Response expectations</h2><p>Messages are reviewed as capacity allows. Clear bug reports and privacy requests receive priority. Sending a suggestion does not guarantee that it will be implemented.</p>
+</InfoLayout>

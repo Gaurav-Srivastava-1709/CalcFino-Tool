@@ -1,0 +1,68 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import GeneralCalculator from '../../components/GeneralCalculator.astro';
+import GeneralToolCard from '../../components/GeneralToolCard.astro';
+import { categoryDirectory, categorySlug, generalTools, type GeneralTool } from '../../data/calculatorCatalog';
+import { getCalculatorDetail } from '../../data/calculatorContent';
+export function getStaticPaths() { return generalTools.map((tool) => ({ params: { category: categorySlug(tool), slug: tool.slug }, props: { tool } })); }
+const { tool } = Astro.props as { tool: GeneralTool };
+const categoryPath = categoryDirectory(tool);
+const related = generalTools.filter((item) => item.category === tool.category && item.group === tool.group && item.slug !== tool.slug).slice(0, 3);
+const medical = tool.category === 'Health';
+const marketing = tool.category === 'Marketing';
+const detail = getCalculatorDetail(tool);
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: detail.faqs.map((faq) => ({ '@type': 'Question', name: faq.question, acceptedAnswer: { '@type': 'Answer', text: faq.answer } })),
+};
+const appCategoryMap: Record<string, string> = {
+  'Financial': 'FinanceApplication',
+  'Health': 'HealthApplication',
+  'Marketing': 'BusinessApplication'
+};
+const softwareSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  'name': tool.name,
+  'operatingSystem': 'All',
+  'applicationCategory': appCategoryMap[tool.category] || 'BusinessApplication',
+  'browserRequirements': 'Requires HTML5. Requires JavaScript.',
+  'offers': {
+    '@type': 'Offer',
+    'price': '0',
+    'priceCurrency': 'USD'
+  }
+};
+---
+<Layout title={`${tool.name} - Free Online Tool`} description={tool.description}>
+  <div class="shell py-5 text-sm text-[var(--muted)]"><a href="/">Home</a><span class="mx-2">/</span><a href={categoryPath}>{tool.category}</a><span class="mx-2">/</span>{tool.name}</div>
+  <section class="shell grid gap-10 pb-16 pt-7 lg:grid-cols-[minmax(0,.82fr)_minmax(420px,1fr)] lg:gap-16">
+    <div><p class="eyebrow">{tool.group}</p><h1 class="display mt-4 text-[clamp(2.4rem,6vw,4rem)]">{tool.name}</h1><p class="mt-5 text-lg leading-8 text-[var(--muted)]">{tool.description}</p><div class="mt-7 rounded-xl border bg-[var(--panel)] p-4 text-sm leading-6 text-[var(--muted)]" style="border-color:var(--line)"><strong class="text-[var(--text)]">Important:</strong> {medical ? 'This calculator provides an educational estimate and cannot replace advice, testing or diagnosis from a qualified healthcare professional.' : marketing ? 'Use campaign values from the same reporting period, attribution model, currency, and channel scope for a meaningful comparison.' : 'This is a planning estimate. Confirm rates, fees, taxes and eligibility rules with the relevant provider or authority.'}</div></div>
+    <GeneralCalculator tool={tool} />
+  </section>
+  <article class="shell border-t py-16 sm:py-20" style="border-color:var(--line)"><div class="prose-copy mx-auto max-w-3xl">
+    <h2>About the {tool.name}</h2>
+    <p>{detail.overview}</p>
+    <h2>How to use this calculator</h2>
+    <p>Enter values that match your situation and select <strong>Calculate result</strong>. Review the main result and its supporting figures, then change one input at a time to compare scenarios. Results are rounded for readability while the calculation retains additional precision internally.</p>
+    <h3>Information you will need</h3>
+    <ul class="grid gap-2 pl-5">{detail.inputs.map((input) => <li class="list-disc text-[var(--muted)]">{input}</li>)}</ul>
+    <h2>How the calculation works</h2>
+    <p>{detail.interpretation}</p>
+    <div class="my-6 rounded-xl border bg-[var(--soft)] p-5" style="border-color:var(--line)"><h3 class="m-0 text-base">Formula or method</h3><p class="mb-0 mt-2">{detail.formula}</p></div>
+    <h2>Worked example</h2>
+    <p>{detail.example}</p>
+    <p>The example is illustrative rather than a recommendation. Use your own verified values and keep all monetary or measurement units consistent. When comparing alternatives, save or note each result so the assumptions do not become mixed.</p>
+    <h2>How to interpret the result</h2>
+    <p>The primary output answers the main question posed by the {tool.name.toLowerCase()}, while the additional cards provide context. A result with many decimal places is not necessarily more certain. The displayed precision makes comparison easier, but uncertainty in the inputs can be larger than the rounding difference.</p>
+    <p>{medical ? 'Look for trends and ranges instead of treating a single estimate as a pass or fail result. If the output conflicts with symptoms, professional advice, or a direct measurement, rely on appropriate professional assessment.' : marketing ? 'Compare channels only after aligning attribution windows and conversion definitions. Review the metric beside gross margin, customer quality, repeat purchases, refunds, and incremental lift rather than optimizing one ratio in isolation.' : 'Compare the result with a second scenario using a less favorable rate, return, cost, or time period. This sensitivity check often provides more useful planning information than one best-case projection.'}</p>
+    <h2>Limitations and important notes</h2>
+    <p>{detail.limitations}</p>
+    <h2>Frequently asked questions</h2>
+    <div class="mt-5 grid gap-3">{detail.faqs.map((faq) => <details class="rounded-xl border bg-[var(--panel)] p-5" style="border-color:var(--line)"><summary class="cursor-pointer font-semibold text-[var(--text)]">{faq.question}</summary><p class="mb-0 mt-3 text-base">{faq.answer}</p></details>)}</div>
+  </div></article>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(softwareSchema)} />
+  <section class="shell border-t py-16" style="border-color:var(--line)"><h2 class="display text-3xl">Related calculators</h2><div class="mt-6 grid gap-3 md:grid-cols-3">{related.map((item) => <GeneralToolCard tool={item} />)}</div></section>
+</Layout>

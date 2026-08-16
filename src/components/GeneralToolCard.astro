@@ -1,0 +1,11 @@
+---
+import { categorySlug, type GeneralTool } from '../data/calculatorCatalog';
+const { tool } = Astro.props as { tool: GeneralTool };
+const base = categorySlug(tool);
+const iconClass = tool.category === 'Financial' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-300' : tool.category === 'Marketing' ? 'bg-violet-50 text-violet-600 dark:bg-violet-950/60 dark:text-violet-300' : 'bg-teal-50 text-teal-600 dark:bg-teal-950/60 dark:text-teal-300';
+---
+<a href={`/${base}/${tool.slug}`} class="group flex min-h-20 items-center gap-3.5 rounded-xl border bg-[var(--panel)] p-3.5 transition hover:-translate-y-px hover:border-[var(--color-primary)] hover:shadow-md hover:shadow-slate-900/5" style="border-color:var(--line)">
+  <span class:list={['grid size-10 shrink-0 place-items-center rounded-xl', iconClass]}><svg class="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M14 11h2M8 15h2M14 15h2"/></svg></span>
+  <div class="min-w-0 flex-1"><h3 class="truncate text-sm font-semibold tracking-[-.01em] transition-colors group-hover:text-[var(--color-primary)]">{tool.name}</h3><p class="mt-1 truncate text-xs text-[var(--muted)]">{tool.group}</p></div>
+  <span class="grid size-7 shrink-0 place-items-center rounded-lg text-sm text-[var(--muted)] transition group-hover:bg-[var(--soft)] group-hover:text-[var(--color-primary)]" aria-hidden="true">-&gt;</span>
+</a>

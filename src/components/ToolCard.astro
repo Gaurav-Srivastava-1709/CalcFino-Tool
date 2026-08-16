@@ -1,0 +1,13 @@
+---
+import type { Tool } from '../data/tools';
+const { tool, index } = Astro.props as { tool: Tool; index?: number };
+---
+<a href={`/${tool.slug}`} class="group panel flex min-h-48 flex-col p-5 transition hover:-translate-y-px hover:border-[var(--color-primary)] hover:shadow-md hover:shadow-slate-900/5">
+  <div class="flex items-center justify-between gap-3">
+    <span class="eyebrow">{tool.category}</span>
+    <span class="grid size-8 place-items-center rounded-lg bg-emerald-50 text-xs font-semibold text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-300">{String((index ?? 0) + 1).padStart(2, '0')}</span>
+  </div>
+  <h3 class="mt-5 font-[var(--font-display)] text-lg font-bold tracking-[-.03em] transition-colors group-hover:text-[var(--color-primary)]">{tool.shortName}</h3>
+  <p class="mt-2 line-clamp-2 text-sm leading-6 text-[var(--muted)]">{tool.description}</p>
+  <span class="mt-auto pt-4 text-sm font-semibold text-[var(--color-primary)]">Open calculator <span class="inline-block transition-transform group-hover:translate-x-0.5" aria-hidden="true">-&gt;</span></span>
+</a>
