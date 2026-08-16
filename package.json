@@ -12,7 +12,7 @@
     "astro": "astro",
     "check": "astro check",
     "test:content": "node tests/validate-content.mjs",
-    "deploy": "npm run build && wrangler pages deploy dist --project-name CalcFino-Tools"
+    "deploy": "npm run build && wrangler pages deploy dist --project-name calcfino-tools"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
