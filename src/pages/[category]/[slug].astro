@@ -6,6 +6,11 @@ import { categoryDirectory, categorySlug, generalTools, type GeneralTool } from 
 import { getCalculatorDetail } from '../../data/calculatorContent';
 export function getStaticPaths() { return generalTools.map((tool) => ({ params: { category: categorySlug(tool), slug: tool.slug }, props: { tool } })); }
 const { tool } = Astro.props as { tool: GeneralTool };
+function renderFormula(text: string): string {
+  return text
+    .replace(/\^(-?\d+(?:\.\d+)?|\w+)/g, '<sup>$1</sup>')
+    .replace(/ x /g, ' × ');
+}
 const categoryPath = categoryDirectory(tool);
 const related = generalTools.filter((item) => item.category === tool.category && item.group === tool.group && item.slug !== tool.slug).slice(0, 3);
 const medical = tool.category === 'Health';
@@ -50,7 +55,7 @@ const softwareSchema = {
     <ul class="grid gap-2 pl-5">{detail.inputs.map((input) => <li class="list-disc text-[var(--muted)]">{input}</li>)}</ul>
     <h2>How the calculation works</h2>
     <p>{detail.interpretation}</p>
-    <div class="my-6 rounded-xl border bg-[var(--soft)] p-5" style="border-color:var(--line)"><h3 class="m-0 text-base">Formula or method</h3><p class="mb-0 mt-2">{detail.formula}</p></div>
+    <div class="my-6 rounded-xl border bg-[var(--soft)] p-5" style="border-color:var(--line)"><h3 class="m-0 text-base">Formula or method</h3><p class="mb-0 mt-2" set:html={renderFormula(detail.formula)} /></div>
     <h2>Worked example</h2>
     <p>{detail.example}</p>
     <p>The example is illustrative rather than a recommendation. Use your own verified values and keep all monetary or measurement units consistent. When comparing alternatives, save or note each result so the assumptions do not become mixed.</p>

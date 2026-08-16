@@ -4,9 +4,102 @@ const contactEmail = import.meta.env.PUBLIC_CONTACT_EMAIL;
 ---
 <InfoLayout title="Contact" description="Contact CalcFino Tools about calculator feedback, corrections, privacy or partnerships.">
   <p>Found an incorrect result, unclear explanation or accessibility problem? Useful reports include the calculator name, the values entered, the expected result and the device or browser used.</p>
-  <h2>Get in touch</h2>
+
+  <h2>Send us a message</h2>
+  <form id="contact-form" class="grid gap-5 mt-4">
+    <input type="hidden" name="_subject" value="CalcFino Contact Form" />
+    <input type="hidden" name="_captcha" value="false" />
+    <input type="hidden" name="_template" value="table" />
+    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+
+    <div class="field">
+      <label for="name">Name</label>
+      <input class="control" type="text" id="name" name="Name" placeholder="Your name" required />
+    </div>
+
+    <div class="field">
+      <label for="email">Email</label>
+      <input class="control" type="email" id="email" name="Email" placeholder="you@example.com" required />
+    </div>
+
+    <div class="field">
+      <label for="subject">Subject</label>
+      <select class="control" id="subject" name="Subject" required>
+        <option value="" disabled selected>Choose a topic</option>
+        <option value="Bug Report — incorrect result">Bug Report</option>
+        <option value="Feature Suggestion">Feature Suggestion</option>
+        <option value="Formula Correction">Formula Correction</option>
+        <option value="Partnership / Business Inquiry">Partnership</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="message">Message</label>
+      <textarea class="control" id="message" name="Message" rows="5" placeholder="Tell us what's on your mind..." required style="min-height:8rem;resize:vertical"></textarea>
+    </div>
+
+    <div>
+      <button type="submit" class="primary" id="submit-btn">
+        <span id="btn-text">Send Message</span>
+        <span id="btn-loading" style="display:none">Sending...</span>
+      </button>
+    </div>
+  </form>
+
+  <div id="toast" style="display:none;position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);z-index:9999;padding:1rem 1.5rem;border-radius:.75rem;font-weight:600;font-size:.9rem;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:opacity .3s ease"></div>
+
+  <script is:inline>
+    const form = document.getElementById('contact-form');
+    const btn = document.getElementById('submit-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnLoading = document.getElementById('btn-loading');
+    const toast = document.getElementById('toast');
+
+    function showToast(message, type) {
+      toast.textContent = message;
+      toast.style.display = 'block';
+      toast.style.background = type === 'success' ? '#059669' : '#dc2626';
+      toast.style.color = '#fff';
+      toast.style.opacity = '1';
+      setTimeout(() => { toast.style.opacity = '0'; }, 3000);
+      setTimeout(() => { toast.style.display = 'none'; }, 3300);
+    }
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      btn.disabled = true;
+      btnText.style.display = 'none';
+      btnLoading.style.display = 'inline';
+
+      try {
+        const data = new FormData(form);
+        const res = await fetch('https://formsubmit.co/ajax/creating17300@gmail.com', {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: data
+        });
+
+        if (res.ok) {
+          showToast('Message sent successfully! We\'ll get back to you soon.', 'success');
+          form.reset();
+        } else {
+          showToast('Something went wrong. Please try again.', 'error');
+        }
+      } catch {
+        showToast('Network error. Please try again.', 'error');
+      } finally {
+        btn.disabled = false;
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+      }
+    });
+  </script>
+
+  <h2>Other ways to reach us</h2>
   <p>Email us at <a class="font-bold underline" href="mailto:contact@calcfino.com">contact@calcfino.com</a>. Please do not send sensitive medical, financial or account information.</p>
   {contactEmail && <p>For partnership or business inquiries, you can also reach us at <a class="font-bold underline" href={`mailto:${contactEmail}`}>{contactEmail}</a>.</p>}
+
   <h2>What we can help with</h2><p>We welcome formula corrections, feature suggestions, broken-link reports, privacy questions and partnership inquiries. CalcFino cannot provide individual medical guidance or personalized coaching plans.</p>
   <h2>Response expectations</h2><p>Messages are reviewed as capacity allows. Clear bug reports and privacy requests receive priority. Sending a suggestion does not guarantee that it will be implemented.</p>
 </InfoLayout>
