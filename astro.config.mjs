@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://calcfino-tools.pages.dev',
+  site: 'https://calcfinotools.pages.dev',
   integrations: [sitemap({
     filter: (page) => !/\/(404|500)\/$/.test(page),
     chunks: {
