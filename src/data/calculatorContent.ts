@@ -1,4 +1,5 @@
 import type { GeneralKind, GeneralTool } from './calculatorCatalog';
+import { calculatorFaqs } from './calculatorFaqs';
 
 interface MethodContent { method: string; formula: string; example: string; inputs: string[]; }
 export interface CalculatorDetail extends MethodContent {
@@ -63,10 +64,8 @@ export function getCalculatorDetail(tool: GeneralTool): CalculatorDetail {
     : tool.category === 'Marketing'
       ? `The ${tool.name.toLowerCase()} calculates a reporting metric, not a forecast or guarantee. Attribution platforms can assign the same conversion differently because of lookback windows, view-through credit, cross-device behavior, modeled conversions, refunds, and data delays. Revenue efficiency does not automatically equal profit. Reconcile source data, use contribution margin where relevant, and compare like-for-like campaign periods before changing budgets.`
       : `The ${tool.name.toLowerCase()} cannot account for every factor that affects an individual result. Measurement technique, hydration, body composition, medication, pregnancy, illness, training status, and normal biological variation may matter. Do not use an estimate to diagnose a condition, select medication dosage, decide whether to drive, or ignore symptoms. A qualified professional can interpret measurements in the context of history and appropriate testing.`;
-  const faqs = [
+  const faqs = calculatorFaqs[tool.slug] || [
     { question: `How accurate is the ${tool.name}?`, answer: `It applies the stated ${tool.kind.replaceAll('-', ' ')} method accurately to the values entered. Real-world accuracy depends on measurement quality and whether the model's assumptions fit the situation.` },
-    { question: `What information do I need for the ${tool.name}?`, answer: `Use current, consistently measured values for: ${base.inputs.join(', ').toLowerCase()}. Check units before calculating.` },
-    { question: `Can I rely on this ${tool.name.toLowerCase()} for a final decision?`, answer: tool.category === 'Financial' ? 'Use it for comparison and planning, then verify current rates, fees, taxes, eligibility, and contract terms with the appropriate provider or authority.' : tool.category === 'Marketing' ? 'Use it to standardize and compare campaign data, then review attribution quality, margins, refunds, channel overlap, and business goals before changing spend.' : 'Use it as educational context only. Clinical, dietary, pregnancy, safety, and treatment decisions should be discussed with a qualified professional.' },
     { question: `Is the ${tool.name} free and private?`, answer: 'Yes. It is free to use without registration. Values are calculated in your browser and are not saved as a personal profile by CalcFino Tools.' },
   ];
   return { ...base, overview, interpretation, limitations, faqs };
