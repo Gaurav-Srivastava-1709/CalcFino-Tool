@@ -22,9 +22,9 @@ const defaultTime = tool.kind === 'fixed'
     </div>}
     {fixed && <div class="rounded-xl border bg-[var(--soft)] p-4" style="border-color:var(--line)"><span class="text-xs font-semibold text-[var(--muted)]">RACE DISTANCE</span><div class="mt-1 text-lg font-semibold">{tool.distanceKm} km <span class="text-sm font-normal text-[var(--muted)]">({(tool.distanceKm! / 1.609344).toFixed(2)} mi)</span></div></div>}
     {timeKinds.includes(tool.kind) && <fieldset><legend class="mb-2 text-xs font-bold tracking-[.04em] text-[var(--muted)]">{tool.kind === 'effort' ? 'RECENT 5K TIME' : tool.kind === 'training' ? 'RECENT 5K TIME' : 'ELAPSED / GOAL TIME'}</legend><div class="grid grid-cols-3 gap-3">
-      <div class="field"><label for="hours">HOURS</label><input class="control" id="hours" name="hours" inputmode="numeric" type="number" min="0" value={defaultTime[0]} /></div>
-      <div class="field"><label for="minutes">MINUTES</label><input class="control" id="minutes" name="minutes" inputmode="numeric" type="number" min="0" max="59" value={defaultTime[1]} /></div>
-      <div class="field"><label for="seconds">SECONDS</label><input class="control" id="seconds" name="seconds" inputmode="numeric" type="number" min="0" max="59" value="0" /></div>
+      <div class="field"><label for="hours">HOURS</label><input class="control" id="hours" name="hours" inputmode="numeric" type="number" min="0" max="23" value={defaultTime[0]} required /></div>
+      <div class="field"><label for="minutes">MINUTES</label><input class="control" id="minutes" name="minutes" inputmode="numeric" type="number" min="0" max="59" value={defaultTime[1]} required /></div>
+      <div class="field"><label for="seconds">SECONDS</label><input class="control" id="seconds" name="seconds" inputmode="numeric" type="number" min="0" max="59" value="0" required /></div>
     </div></fieldset>}
     {tool.kind === 'finish' && <fieldset><legend class="mb-2 text-xs font-bold tracking-[.04em] text-[var(--muted)]">TARGET PACE</legend><div class="grid grid-cols-[1fr_1fr_8rem] gap-3"><div class="field"><label for="paceMin">MIN</label><input class="control" id="paceMin" name="paceMin" type="number" min="0" value="5" /></div><div class="field"><label for="paceSec">SEC</label><input class="control" id="paceSec" name="paceSec" type="number" min="0" max="59" value="0" /></div><div class="field"><label for="paceUnit">PER</label><select class="control" id="paceUnit" name="paceUnit"><option value="km">Kilometer</option><option value="mi">Mile</option></select></div></div></fieldset>}
     {tool.kind === 'treadmill' && <div class="grid grid-cols-[1fr_8rem] gap-3"><div class="field"><label for="speed">TREADMILL SPEED</label><input class="control" id="speed" name="speed" type="number" min="0.1" step="0.1" value="10" /></div><div class="field"><label for="speedUnit">UNIT</label><select class="control" id="speedUnit" name="speedUnit"><option value="kmh">km/h</option><option value="mph">mph</option></select></div></div>}
@@ -62,10 +62,16 @@ const defaultTime = tool.kind === 'fixed'
       if (kind === 'runwalk') { const rd=n('runDuration'), wd=n('walkDuration'); const covered=rd/n('runPace')+wd/n('walkPace'); paceKm=(rd+wd)/covered*60; html=metric('AVERAGE PACE / KM',formatDuration(paceKm))+metric('PACE / MILE',formatDuration(paceKm*KM_PER_MILE))+metric('CYCLE DISTANCE',`${covered.toFixed(2)} km`); splits=false; }
       if (kind === 'grade') { const raw=n('paceMin')*60+n('paceSec'), g=n('grade')/100; const cost=155.4*g**5-30.4*g**4-43.3*g**3+46.3*g**2+19.5*g+3.6; const ratio=Math.max(.45,cost/3.6); const gap=raw/ratio; html=metric('GRADE-ADJUSTED PACE',formatDuration(gap)+'/km')+metric('ACTUAL PACE',formatDuration(raw)+'/km')+metric('EFFORT FACTOR',`${ratio.toFixed(2)}x`); splits=false; }
       if (kind === 'training' || kind === 'effort') { const fiveKPace=totalSeconds/5; const ranges: [string,number,number][] = kind === 'training' ? [['Easy',60,120],['Long run',45,100],['Tempo',20,35],['Threshold',12,25],['Interval',-12,5]] : [['Suggested range', ...root.dataset.offset!.split(',').map(Number)] as [string,number,number]]; html=ranges.map(([label,lo,hi])=>metric(label,`${formatDuration(fiveKPace+lo)}–${formatDuration(fiveKPace+hi)}`, 'per kilometer')).join(''); splits=false; }
-      if (!html || !Number.isFinite(paceKm || totalSeconds) || (kind !== 'grade' && totalSeconds <= 0 && !['treadmill','runwalk'].includes(kind!))) { error.textContent='Enter valid numbers greater than zero.'; error.classList.remove('hidden'); results.classList.add('hidden'); return; }
+      if (!html || !Number.isFinite(paceKm) || !Number.isFinite(totalSeconds) || (kind !== 'grade' && totalSeconds <= 0 && !['treadmill','runwalk'].includes(kind!))) { error.textContent='Enter valid numbers greater than zero.'; error.classList.remove('hidden'); results.classList.add('hidden'); return; }
       metrics.innerHTML=html; results.classList.remove('hidden'); const splitBox=root.querySelector<HTMLElement>('[data-splits]')!;
       if (splits && paceKm > 0 && distanceKm > 0) { const body=root.querySelector<HTMLElement>('[data-split-body]')!; const step=distanceKm>15?5:1; const points: number[]=[]; for(let d=step;d<distanceKm;d+=step) points.push(d); points.push(distanceKm); body.innerHTML=points.map((d,i)=>`<tr class="border-t border-slate-200 dark:border-slate-700"><td class="p-3">${d===distanceKm?d.toFixed(distanceKm%1?2:0):d} km</td><td class="p-3">${formatDuration(paceKm*(d-(points[i-1]||0)))}</td><td class="p-3 font-semibold">${formatDuration(paceKm*d)}</td></tr>`).join(''); splitBox.classList.remove('hidden'); } else splitBox.classList.add('hidden');
       results.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
+    });
+    root.querySelectorAll('input[type="number"]').forEach((input) => {
+      input.addEventListener('input', () => {
+        const el = input as HTMLInputElement;
+        if (el.validity.valid || el.value === '') { el.style.borderColor = ''; } else { el.style.borderColor = '#dc2626'; }
+      });
     });
   });
 </script>
