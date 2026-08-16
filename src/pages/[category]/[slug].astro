@@ -16,6 +16,7 @@ const related = generalTools.filter((item) => item.category === tool.category &&
 const medical = tool.category === 'Health';
 const marketing = tool.category === 'Marketing';
 const detail = getCalculatorDetail(tool);
+const pageUrl = new URL(`/${categorySlug(tool)}/${tool.slug}/`, Astro.site).href;
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
@@ -30,6 +31,8 @@ const softwareSchema = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   'name': tool.name,
+  'url': pageUrl,
+  'description': tool.description,
   'operatingSystem': 'All',
   'applicationCategory': appCategoryMap[tool.category] || 'BusinessApplication',
   'browserRequirements': 'Requires HTML5. Requires JavaScript.',
@@ -38,6 +41,15 @@ const softwareSchema = {
     'price': '0',
     'priceCurrency': 'USD'
   }
+};
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  'itemListElement': [
+    { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': new URL('/', Astro.site).href },
+    { '@type': 'ListItem', 'position': 2, 'name': `${tool.category} calculators`, 'item': new URL(`${categoryPath}/`, Astro.site).href },
+    { '@type': 'ListItem', 'position': 3, 'name': tool.name, 'item': pageUrl }
+  ]
 };
 ---
 <Layout title={`${tool.name} - Free Online Tool`} description={tool.description}>
@@ -69,5 +81,6 @@ const softwareSchema = {
   </div></article>
   <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
   <script is:inline type="application/ld+json" set:html={JSON.stringify(softwareSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   <section class="shell border-t py-16" style="border-color:var(--line)"><h2 class="display text-3xl">Related calculators</h2><div class="mt-6 grid gap-3 md:grid-cols-3">{related.map((item) => <GeneralToolCard tool={item} />)}</div></section>
 </Layout>

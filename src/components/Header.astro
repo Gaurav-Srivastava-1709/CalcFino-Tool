@@ -25,7 +25,7 @@ const searchItems = [
         <div class="absolute left-0 top-full w-[38rem] rounded-2xl border bg-[var(--panel)] p-2.5 shadow-2xl shadow-slate-900/10 dark:shadow-black/30" style="border-color:var(--line)">
           <div class="grid grid-cols-3 gap-2 p-1">
             <a href="/financial-calculators" class="rounded-lg bg-[var(--soft)] p-3 transition hover:text-[var(--color-primary)]"><span class="block text-sm font-semibold">Financial calculators</span><span class="mt-1 block text-xs text-[var(--muted)]">71 tools</span></a>
-            <a href="/health-calculators" class="rounded-lg bg-[var(--soft)] p-3 transition hover:text-[var(--color-primary)]"><span class="block text-sm font-semibold">Health & fitness</span><span class="mt-1 block text-xs text-[var(--muted)]">28 tools</span></a>
+            <a href="/health-calculators" class="rounded-lg bg-[var(--soft)] p-3 transition hover:text-[var(--color-primary)]"><span class="block text-sm font-semibold">Health & fitness</span><span class="mt-1 block text-xs text-[var(--muted)]">27 tools</span></a>
             <a href="/marketing-calculators" class="rounded-lg bg-[var(--soft)] p-3 transition hover:text-[var(--color-primary)]"><span class="block text-sm font-semibold">Marketing</span><span class="mt-1 block text-xs text-[var(--muted)]">10 tools</span></a>
           </div>
           <p class="px-4 pb-1 pt-3 text-xs font-semibold uppercase tracking-[.06em] text-[var(--muted)]">Popular running tools</p>
@@ -44,6 +44,7 @@ const searchItems = [
       </details>
       <a class:list={['rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-[var(--soft)] hover:text-[var(--color-primary)]', path === '/about/' && 'text-[var(--color-primary)]']} href="/about">About</a>
       <a class:list={['rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-[var(--soft)] hover:text-[var(--color-primary)]', path === '/contact/' && 'text-[var(--color-primary)]']} href="/contact">Contact</a>
+      <a class:list={['rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-[var(--soft)] hover:text-[var(--color-primary)]', path === '/privacy-policy/' && 'text-[var(--color-primary)]']} href="/privacy-policy">Privacy</a>
     </nav>
 
     <div class="flex items-center gap-2">
@@ -80,7 +81,7 @@ const searchItems = [
     <div class="shell py-4">
       <p class="px-2 pb-2 text-xs font-semibold uppercase tracking-[.06em] text-[var(--muted)]">Popular calculators</p>
       <div class="mb-3"><label class="sr-only" for="mobile-search">Search calculators</label><input id="mobile-search" class="control" type="search" placeholder="Search all calculators..." autocomplete="off" /></div>
-      <div class="mb-3 grid grid-cols-2 gap-2"><a href="/financial-calculators" class="rounded-lg bg-[var(--soft)] p-3 text-sm font-semibold">Financial <span class="block pt-1 text-xs font-normal text-[var(--muted)]">71 tools</span></a><a href="/health-calculators" class="rounded-lg bg-[var(--soft)] p-3 text-sm font-semibold">Health <span class="block pt-1 text-xs font-normal text-[var(--muted)]">28 tools</span></a><a href="/marketing-calculators" class="col-span-2 rounded-lg bg-[var(--soft)] p-3 text-sm font-semibold">Marketing & revenue <span class="block pt-1 text-xs font-normal text-[var(--muted)]">10 tools</span></a></div>
+      <div class="mb-3 grid grid-cols-2 gap-2"><a href="/financial-calculators" class="rounded-lg bg-[var(--soft)] p-3 text-sm font-semibold">Financial <span class="block pt-1 text-xs font-normal text-[var(--muted)]">71 tools</span></a><a href="/health-calculators" class="rounded-lg bg-[var(--soft)] p-3 text-sm font-semibold">Health <span class="block pt-1 text-xs font-normal text-[var(--muted)]">27 tools</span></a><a href="/marketing-calculators" class="col-span-2 rounded-lg bg-[var(--soft)] p-3 text-sm font-semibold">Marketing & revenue <span class="block pt-1 text-xs font-normal text-[var(--muted)]">10 tools</span></a></div>
       <div class="grid grid-cols-2 gap-1">
         {featured.slice(0, 4).map((tool) => <a href={`/${tool.slug}`} class="rounded-lg px-2 py-2.5 text-sm font-medium hover:bg-[var(--soft)]">{tool.shortName}</a>)}
       </div>
@@ -88,6 +89,7 @@ const searchItems = [
       <div class="mt-3 flex gap-2 border-t pt-3" style="border-color:var(--line)">
         <a href="/about" class="flex-1 rounded-lg px-3 py-2 text-center text-sm font-medium hover:bg-[var(--soft)]">About</a>
         <a href="/contact" class="flex-1 rounded-lg px-3 py-2 text-center text-sm font-medium hover:bg-[var(--soft)]">Contact</a>
+        <a href="/privacy-policy" class="flex-1 rounded-lg px-3 py-2 text-center text-sm font-medium hover:bg-[var(--soft)]">Privacy</a>
       </div>
     </div>
   </nav>

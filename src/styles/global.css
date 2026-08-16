@@ -7,6 +7,7 @@
   --color-paper: #ffffff;
   --color-primary: #059669;
   --color-primary-hover: #047857;
+  --color-primary-rgb: 5 150 105;
 }
 
 :root {
@@ -223,6 +224,16 @@ summary::-webkit-details-marker {
   margin-top: .2rem;
   color: var(--muted);
   font-size: .75rem;
+}
+
+.result-highlight {
+  border-color: var(--color-primary);
+  background: linear-gradient(135deg, var(--panel) 0%, rgba(var(--color-primary-rgb, 16 185 129) / .05) 100%);
+}
+
+.result-highlight .result-value {
+  color: var(--color-primary);
+  font-size: 1.7rem;
 }
 
 @media (max-width: 640px) {

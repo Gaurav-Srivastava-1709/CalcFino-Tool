@@ -1,0 +1,74 @@
+---
+interface Row { month: number; payment: number; principal: number; interest: number; balance: number; totalInterest: number; }
+const { rows = [], title = 'Amortization Schedule' } = Astro.props as { rows?: Row[]; title?: string };
+---
+{rows.length > 0 && (
+<div class="amortization-wrap mt-6">
+  <details class="amortization-details">
+    <summary class="amortization-toggle">
+      <span class="amortization-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 4-6"/></svg>
+      </span>
+      <span>{title}</span>
+      <span class="amortization-count">{rows.length} payments</span>
+      <span class="amortization-chevron">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </span>
+    </summary>
+    <div class="amortization-table-wrap">
+      <table class="amortization-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Payment</th>
+            <th>Principal</th>
+            <th>Interest</th>
+            <th>Total Interest</th>
+            <th>Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr>
+              <td>{row.month}</td>
+              <td>${row.payment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              <td>${row.principal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              <td>${row.interest.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              <td>${row.totalInterest.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              <td>${Math.max(0, row.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </details>
+</div>
+)}
+
+<style>
+  .amortization-wrap { margin-top: 1.5rem; }
+  .amortization-details { border: 1px solid var(--line); border-radius: 0.75rem; overflow: hidden; background: var(--panel); }
+  .amortization-toggle {
+    display: flex; align-items: center; gap: 0.5rem; padding: 0.875rem 1rem;
+    cursor: pointer; font-weight: 600; font-size: 0.875rem; color: var(--heading);
+    list-style: none; user-select: none; transition: background 0.15s;
+  }
+  .amortization-toggle:hover { background: var(--soft); }
+  .amortization-toggle::-webkit-details-marker { display: none; }
+  .amortization-icon { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 0.5rem; background: var(--color-primary-bg, rgba(79,70,229,0.08)); color: var(--color-primary); flex-shrink: 0; }
+  .amortization-count { margin-left: auto; font-size: 0.75rem; font-weight: 500; color: var(--muted); background: var(--soft); padding: 0.2rem 0.6rem; border-radius: 999px; }
+  .amortization-chevron { transition: transform 0.2s; }
+  details[open] .amortization-chevron { transform: rotate(180deg); }
+  .amortization-table-wrap { overflow-x: auto; padding: 0 1rem 1rem; }
+  .amortization-table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+  .amortization-table th {
+    text-align: left; padding: 0.625rem 0.75rem; font-weight: 600; font-size: 0.6875rem;
+    letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted);
+    border-bottom: 2px solid var(--line); white-space: nowrap; position: sticky; top: 0; background: var(--panel);
+  }
+  .amortization-table td {
+    padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--line); white-space: nowrap; color: var(--body);
+  }
+  .amortization-table tbody tr:hover { background: var(--soft); }
+  .amortization-table tbody tr:last-child td { border-bottom: none; }
+</style>

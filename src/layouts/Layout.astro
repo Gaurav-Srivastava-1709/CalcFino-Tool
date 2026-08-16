@@ -10,6 +10,7 @@ const { title, description, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const fullTitle = title.includes('CalcFino') ? title : `${title} | CalcFino Tools`;
 const analyticsId = import.meta.env.PUBLIC_GA_ID;
+const hasAnalytics = analyticsId && analyticsId !== 'G-XXXXXXXXXX';
 ---
 <!doctype html>
 <html lang="en">
@@ -19,18 +20,22 @@ const analyticsId = import.meta.env.PUBLIC_GA_ID;
     <meta name="generator" content={Astro.generator} />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    {noindex && <meta name="robots" content="noindex,follow" />}
+    <meta name="robots" content={noindex ? 'noindex,follow' : 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1'} />
     <link rel="canonical" href={canonical} />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="CalcFino Tools" />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary" />
-    {analyticsId && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${analyticsId}`}></script>}
-    {analyticsId && <script is:inline define:vars={{ analyticsId }}>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config',analyticsId,{anonymize_ip:true});</script>}
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="theme-color" content="#059669" />
+    {hasAnalytics && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${analyticsId}`}></script>}
+    {hasAnalytics && <script is:inline define:vars={{ analyticsId }}>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config',analyticsId,{anonymize_ip:true});</script>}
     <script is:inline>try{const t=localStorage.getItem('theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')}catch{}</script>
   </head>
   <body>

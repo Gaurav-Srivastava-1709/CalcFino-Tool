@@ -1,5 +1,7 @@
 export type GeneralKind =
-  | 'loan' | 'investment' | 'simple-interest' | 'percentage' | 'debt-ratio'
+  | 'mortgage' | 'loan' | 'auto-loan' | 'credit-card' | 'credit-cards-payoff' | 'debt-payoff' | 'student-loan' | 'personal-loan' | 'business-loan' | 'boat-loan' | 'amortization'
+  | 'investment' | 'simple-interest' | 'interest-calculator' | 'compound-interest' | 'savings' | 'cd' | 'bond' | 'present-value' | 'future-value' | 'interest-rate' | 'payback-period' | 'apr' | 'inflation' | 'finance' | 'roi' | 'margin' | 'discount'
+  | 'percentage' | 'debt-ratio'
   | 'salary' | 'lease' | 'depreciation' | 'budget' | 'currency' | 'tax'
   | 'bmi' | 'calories' | 'body-fat' | 'ideal-weight' | 'lean-mass'
   | 'one-rep-max' | 'heart-rate' | 'pregnancy' | 'cycle' | 'macros'
@@ -26,23 +28,43 @@ const make = (category: GeneralTool['category'], group: string, kind: GeneralKin
 }));
 
 export const financialTools: GeneralTool[] = [
-  ...make('Financial', 'Mortgage & real estate', 'loan', ['Mortgage Calculator', 'Amortization Calculator', 'Mortgage Payoff Calculator', 'Real Estate Calculator', 'Refinance Calculator', 'FHA Loan Calculator', 'VA Mortgage Calculator', 'Home Equity Loan Calculator', 'HELOC Calculator', 'Down Payment Calculator']),
+  ...make('Financial', 'Mortgage & real estate', 'mortgage', ['Mortgage Calculator']),
+  ...make('Financial', 'Mortgage & real estate', 'amortization', ['Amortization Calculator']),
+  ...make('Financial', 'Mortgage & real estate', 'loan', ['Mortgage Payoff Calculator', 'Real Estate Calculator', 'Refinance Calculator', 'FHA Loan Calculator', 'VA Mortgage Calculator', 'Home Equity Loan Calculator', 'HELOC Calculator', 'Down Payment Calculator']),
   ...make('Financial', 'Mortgage & real estate', 'debt-ratio', ['House Affordability Calculator', 'Rent Calculator', 'Debt-to-Income Ratio Calculator', 'Rent vs. Buy Calculator']),
   ...make('Financial', 'Mortgage & real estate', 'investment', ['Rental Property Calculator']),
-  ...make('Financial', 'Mortgage & real estate', 'percentage', ['APR Calculator']),
-  ...make('Financial', 'Auto', 'loan', ['Auto Loan Calculator', 'Cash Back or Low Interest Calculator']),
+  ...make('Financial', 'Mortgage & real estate', 'apr', ['APR Calculator']),
+  ...make('Financial', 'Auto', 'auto-loan', ['Auto Loan Calculator', 'Cash Back or Low Interest Calculator']),
   ...make('Financial', 'Auto', 'lease', ['Auto Lease Calculator']),
-  ...make('Financial', 'Investment', 'investment', ['Interest Calculator', 'Investment Calculator', 'Finance Calculator', 'Compound Interest Calculator', 'Interest Rate Calculator', 'Savings Calculator', 'CD Calculator', 'Bond Calculator', 'Mutual Fund Calculator', 'Average Return Calculator', 'IRR Calculator', 'Payback Period Calculator', 'Present Value Calculator', 'Future Value Calculator']),
+  ...make('Financial', 'Investment', 'interest-calculator', ['Interest Calculator']),
+  ...make('Financial', 'Investment', 'investment', ['Investment Calculator']),
+  ...make('Financial', 'Investment', 'finance', ['Finance Calculator']),
+  ...make('Financial', 'Investment', 'compound-interest', ['Compound Interest Calculator']),
+  ...make('Financial', 'Investment', 'interest-rate', ['Interest Rate Calculator']),
+  ...make('Financial', 'Investment', 'savings', ['Savings Calculator']),
+  ...make('Financial', 'Investment', 'cd', ['CD Calculator']),
+  ...make('Financial', 'Investment', 'bond', ['Bond Calculator', 'Mutual Fund Calculator', 'Average Return Calculator', 'IRR Calculator']),
+  ...make('Financial', 'Investment', 'payback-period', ['Payback Period Calculator']),
+  ...make('Financial', 'Investment', 'present-value', ['Present Value Calculator']),
+  ...make('Financial', 'Investment', 'future-value', ['Future Value Calculator']),
   ...make('Financial', 'Investment', 'simple-interest', ['Simple Interest Calculator']),
-  ...make('Financial', 'Investment', 'percentage', ['ROI Calculator']),
+  ...make('Financial', 'Investment', 'roi', ['ROI Calculator']),
   ...make('Financial', 'Retirement', 'investment', ['Retirement Calculator', '401K Calculator', 'Pension Calculator', 'Social Security Calculator', 'Annuity Calculator', 'Annuity Payout Calculator', 'Roth IRA Calculator', 'IRA Calculator', 'RMD Calculator']),
   ...make('Financial', 'Tax & salary', 'tax', ['Income Tax Calculator', 'Marriage Tax Calculator', 'Estate Tax Calculator', 'Take-Home-Paycheck Calculator', 'Sales Tax Calculator', 'VAT Calculator']),
   ...make('Financial', 'Tax & salary', 'salary', ['Salary Calculator']),
   ...make('Financial', 'Tax & salary', 'tax', ['Commission Calculator']),
-  ...make('Financial', 'Loans & debt', 'loan', ['Loan Calculator', 'Payment Calculator', 'Credit Card Calculator', 'Credit Cards Payoff Calculator', 'Debt Payoff Calculator', 'Debt Consolidation Calculator', 'Repayment Calculator', 'Student Loan Calculator', 'College Cost Calculator', 'Business Loan Calculator', 'Personal Loan Calculator', 'Boat Loan Calculator']),
-  ...make('Financial', 'Other', 'currency', ['Currency Calculator', 'Inflation Calculator']),
+  ...make('Financial', 'Loans & debt', 'loan', ['Loan Calculator', 'Payment Calculator', 'Repayment Calculator', 'Student Loan Calculator', 'College Cost Calculator', 'Debt Consolidation Calculator']),
+  ...make('Financial', 'Loans & debt', 'credit-card', ['Credit Card Calculator']),
+  ...make('Financial', 'Loans & debt', 'credit-cards-payoff', ['Credit Cards Payoff Calculator']),
+  ...make('Financial', 'Loans & debt', 'debt-payoff', ['Debt Payoff Calculator']),
+  ...make('Financial', 'Loans & debt', 'personal-loan', ['Personal Loan Calculator']),
+  ...make('Financial', 'Loans & debt', 'business-loan', ['Business Loan Calculator']),
+  ...make('Financial', 'Loans & debt', 'boat-loan', ['Boat Loan Calculator']),
+  ...make('Financial', 'Other', 'currency', ['Currency Calculator']),
+  ...make('Financial', 'Other', 'inflation', ['Inflation Calculator']),
   ...make('Financial', 'Other', 'depreciation', ['Depreciation Calculator']),
-  ...make('Financial', 'Other', 'percentage', ['Margin Calculator', 'Discount Calculator']),
+  ...make('Financial', 'Other', 'margin', ['Margin Calculator']),
+  ...make('Financial', 'Other', 'discount', ['Discount Calculator']),
   ...make('Financial', 'Other', 'lease', ['Lease Calculator']),
   ...make('Financial', 'Other', 'budget', ['Budget Calculator']),
 ];

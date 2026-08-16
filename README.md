@@ -41,3 +41,13 @@ npm run deploy
 ```
 
 The canonical site URL is configured in `astro.config.mjs`. Change it there when moving from the `pages.dev` address to a custom domain.
+
+## Search indexing
+
+The production build generates `sitemap-index.xml` with separate sitemap files for financial, health, marketing, running, and general pages. Submit this URL in Google Search Console and Bing Webmaster Tools:
+
+```text
+https://calcfino-tools.pages.dev/sitemap-index.xml
+```
+
+Do not add an `X-Robots-Tag: noindex` header to the `pages.dev` hostname while it is the site's only public address. If a custom domain is added later, update `site` in `astro.config.mjs` first, redirect the `pages.dev` hostname to the custom domain if possible, and then resubmit the sitemap under the new Search Console property.

@@ -9,33 +9,264 @@ const commonBody: Field[] = [
   { key: 'height', label: 'Height (cm)', value: 175, min: 50, step: .1 },
 ];
 const schemas: Record<string, Field[]> = {
-  loan: [{ key: 'principal', label: 'Loan amount', value: 250000, min: 1, step: 100 }, { key: 'rate', label: 'Annual interest (%)', value: 6.5, min: 0, step: .01 }, { key: 'years', label: 'Loan term (years)', value: 30, min: .1, step: 1 }, { key: 'extra', label: 'Extra monthly payment', value: 0, min: 0, step: 10 }],
-  investment: [{ key: 'principal', label: 'Starting amount', value: 10000, min: 0, step: 100 }, { key: 'monthly', label: 'Monthly contribution', value: 250, min: 0, step: 10 }, { key: 'rate', label: 'Annual return (%)', value: 7, step: .1 }, { key: 'years', label: 'Time (years)', value: 10, min: .1, step: 1 }],
-  'simple-interest': [{ key: 'principal', label: 'Principal amount', value: 10000, min: 0 }, { key: 'rate', label: 'Annual interest (%)', value: 5, step: .1 }, { key: 'years', label: 'Time (years)', value: 3, min: 0, step: .1 }],
-  percentage: [{ key: 'cost', label: 'Original / cost value', value: 100, step: .01 }, { key: 'final', label: 'Final / selling value', value: 125, step: .01 }],
-  'debt-ratio': [{ key: 'income', label: 'Gross monthly income', value: 6000, min: 1 }, { key: 'debt', label: 'Monthly debt payments', value: 1500, min: 0 }, { key: 'housing', label: 'Monthly housing cost', value: 1800, min: 0 }],
-  salary: [{ key: 'amount', label: 'Pay amount', value: 25, min: 0, step: .01 }, { key: 'frequency', label: 'Pay frequency', value: 'hour', options: [['hour', 'Per hour'], ['week', 'Per week'], ['month', 'Per month'], ['year', 'Per year']] }, { key: 'hours', label: 'Hours per week', value: 40, min: 1 }, { key: 'weeks', label: 'Working weeks per year', value: 52, min: 1, max: 52 }],
-  lease: [{ key: 'value', label: 'Asset value', value: 35000, min: 0 }, { key: 'residual', label: 'Residual value', value: 18000, min: 0 }, { key: 'rate', label: 'Annual interest (%)', value: 5, min: 0, step: .1 }, { key: 'months', label: 'Lease term (months)', value: 36, min: 1 }],
-  depreciation: [{ key: 'value', label: 'Initial value', value: 30000, min: 0 }, { key: 'residual', label: 'Salvage value', value: 5000, min: 0 }, { key: 'years', label: 'Useful life (years)', value: 5, min: 1 }, { key: 'elapsed', label: 'Years elapsed', value: 2, min: 0 }],
-  budget: [{ key: 'income', label: 'Monthly income', value: 5000, min: 0 }, { key: 'housing', label: 'Housing', value: 1500, min: 0 }, { key: 'needs', label: 'Other needs', value: 1000, min: 0 }, { key: 'wants', label: 'Wants', value: 750, min: 0 }, { key: 'savings', label: 'Savings & debt payoff', value: 1000, min: 0 }],
-  currency: [{ key: 'amount', label: 'Amount', value: 1000, min: 0, step: .01 }, { key: 'rate', label: 'Conversion / inflation rate', value: 1.08, min: 0, step: .0001 }, { key: 'years', label: 'Years (use 1 for currency)', value: 1, min: 0, step: 1 }],
-  tax: [{ key: 'income', label: 'Amount before tax', value: 50000, min: 0 }, { key: 'deductions', label: 'Deductions / exemptions', value: 0, min: 0 }, { key: 'rate', label: 'Applicable tax rate (%)', value: 20, min: 0, step: .01 }],
+  mortgage: [
+    { key: 'homePrice', label: 'Home price', value: 400000, min: 1, step: 1000 },
+    { key: 'downPayment', label: 'Down payment (%)', value: 20, min: 0, max: 100, step: 1 },
+    { key: 'years', label: 'Loan term (years)', value: 30, min: 1, step: 1 },
+    { key: 'rate', label: 'Interest rate (%)', value: 6.632, min: 0, step: .001 },
+    { key: 'startDate', label: 'Start date', value: '2026-08', type: 'date' },
+    { key: 'propertyTax', label: 'Property tax (annual %)', value: 1.2, min: 0, step: .01 },
+    { key: 'homeInsurance', label: 'Home insurance (annual $)', value: 1500, min: 0, step: 50 },
+    { key: 'pmi', label: 'PMI insurance (monthly $)', value: 0, min: 0, step: 10 },
+    { key: 'hoa', label: 'HOA fee (monthly $)', value: 0, min: 0, step: 10 },
+    { key: 'otherCosts', label: 'Other costs (monthly $)', value: 333.33, min: 0, step: 10 },
+    { key: 'extra', label: 'Extra monthly payment', value: 0, min: 0, step: 50 },
+    { key: 'extraYearly', label: 'Extra yearly payment', value: 0, min: 0, step: 100 },
+    { key: 'extraOneTime', label: 'One-time extra payment', value: 0, min: 0, step: 500 },
+    { key: 'oneTimeMonth', label: 'One-time payment month (1-12)', value: 1, min: 1, max: 12, step: 1 },
+    { key: 'taxIncrease', label: 'Annual property tax increase (%)', value: 0, min: 0, step: .1 },
+    { key: 'insuranceIncrease', label: 'Annual insurance increase (%)', value: 0, min: 0, step: .1 },
+    { key: 'hoaIncrease', label: 'Annual HOA increase (%)', value: 0, min: 0, step: .1 },
+    { key: 'otherCostsIncrease', label: 'Annual other costs increase (%)', value: 0, min: 0, step: .1 },
+    { key: 'biweekly', label: 'Payment frequency', value: 'biweekly', options: [['monthly', 'Monthly'], ['biweekly', 'Biweekly (every 2 weeks)']] },
+  ],
+  loan: [
+    { key: 'principal', label: 'Loan amount', value: 100000, min: 1, step: 1000 },
+    { key: 'years', label: 'Loan term (years)', value: 10, min: 0, step: 1 },
+    { key: 'months', label: 'Loan term (months)', value: 0, min: 0, max: 11, step: 1 },
+    { key: 'rate', label: 'Interest rate (%)', value: 6.5, min: 0, step: .01 },
+    { key: 'compound', label: 'Compounding', value: 'monthly', options: [['monthly', 'Monthly'], ['annually', 'Annually'], ['quarterly', 'Quarterly'], ['semiannually', 'Semi-annually'], ['semimonthly', 'Semi-monthly'], ['biweekly', 'Biweekly'], ['weekly', 'Weekly'], ['daily', 'Daily'], ['continuously', 'Continuously']] },
+    { key: 'payback', label: 'Pay back', value: 'monthly', options: [['daily', 'Every Day'], ['weekly', 'Every Week'], ['biweekly', 'Every 2 Weeks'], ['semimonthly', 'Every Half Month'], ['monthly', 'Every Month'], ['quarterly', 'Every Quarter'], ['6months', 'Every 6 Months'], ['yearly', 'Every Year']] },
+    { key: 'extra', label: 'Extra payment', value: 0, min: 0, step: 50 },
+  ],
+  investment: [
+    { key: 'principal', label: 'Starting amount', value: 10000, min: 0, step: 100 },
+    { key: 'monthly', label: 'Monthly contribution', value: 250, min: 0, step: 50 },
+    { key: 'rate', label: 'Annual return (%)', value: 7, min: 0, step: .1 },
+    { key: 'years', label: 'Time (years)', value: 10, min: .1, step: 1 },
+    { key: 'compound', label: 'Compounding', value: 'monthly', options: [['monthly', 'Monthly'], ['annually', 'Annually'], ['quarterly', 'Quarterly'], ['daily', 'Daily']] },
+    { key: 'inflation', label: 'Inflation rate (%)', value: 3, min: 0, step: .1 },
+  ],
+  'simple-interest': [
+    { key: 'principal', label: 'Principal amount', value: 10000, min: 0, step: 100 },
+    { key: 'rate', label: 'Annual interest (%)', value: 5, min: 0, step: .1 },
+    { key: 'years', label: 'Time (years)', value: 3, min: 0, step: .1 },
+  ],
+  percentage: [
+    { key: 'cost', label: 'Original / cost value', value: 100, step: .01 },
+    { key: 'final', label: 'Final / selling value', value: 125, step: .01 },
+  ],
+  'debt-ratio': [
+    { key: 'income', label: 'Gross monthly income', value: 6000, min: 1 },
+    { key: 'debt', label: 'Monthly debt payments', value: 1500, min: 0 },
+    { key: 'housing', label: 'Monthly housing cost', value: 1800, min: 0 },
+  ],
+  salary: [
+    { key: 'amount', label: 'Pay amount', value: 25, min: 0, step: .01 },
+    { key: 'frequency', label: 'Pay frequency', value: 'hour', options: [['hour', 'Per hour'], ['week', 'Per week'], ['month', 'Per month'], ['year', 'Per year']] },
+    { key: 'hours', label: 'Hours per week', value: 40, min: 1 },
+    { key: 'weeks', label: 'Working weeks per year', value: 52, min: 1, max: 52 },
+    { key: 'federalTax', label: 'Federal tax rate (%)', value: 22, min: 0, max: 50, step: .1 },
+    { key: 'stateTax', label: 'State / local tax (%)', value: 5, min: 0, max: 30, step: .1 },
+    { key: 'otherDeductions', label: 'Other deductions ($)', value: 500, min: 0, step: 50 },
+  ],
+  lease: [
+    { key: 'value', label: 'Asset value', value: 35000, min: 0 },
+    { key: 'residual', label: 'Residual value', value: 18000, min: 0 },
+    { key: 'rate', label: 'Annual interest (%)', value: 5, min: 0, step: .1 },
+    { key: 'months', label: 'Lease term (months)', value: 36, min: 1 },
+  ],
+  depreciation: [
+    { key: 'value', label: 'Initial value', value: 30000, min: 0 },
+    { key: 'residual', label: 'Salvage value', value: 5000, min: 0 },
+    { key: 'years', label: 'Useful life (years)', value: 5, min: 1 },
+    { key: 'elapsed', label: 'Years elapsed', value: 2, min: 0 },
+  ],
+  budget: [
+    { key: 'income', label: 'Monthly income', value: 5000, min: 0 },
+    { key: 'housing', label: 'Housing', value: 1500, min: 0 },
+    { key: 'needs', label: 'Other needs', value: 1000, min: 0 },
+    { key: 'wants', label: 'Wants', value: 750, min: 0 },
+    { key: 'savings', label: 'Savings & debt payoff', value: 1000, min: 0 },
+  ],
+  currency: [
+    { key: 'amount', label: 'Amount', value: 1000, min: 0, step: 1 },
+    { key: 'from', label: 'From currency', value: 'USD', options: [['USD', 'US Dollar (USD)'], ['EUR', 'Euro (EUR)'], ['GBP', 'British Pound (GBP)'], ['JPY', 'Japanese Yen (JPY)'], ['CAD', 'Canadian Dollar (CAD)'], ['AUD', 'Australian Dollar (AUD)'], ['CHF', 'Swiss Franc (CHF)'], ['CNY', 'Chinese Yuan (CNY)'], ['INR', 'Indian Rupee (INR)'], ['MXN', 'Mexican Peso (MXN)'], ['BRL', 'Brazilian Real (BRL)'], ['KRW', 'South Korean Won (KRW)'], ['SGD', 'Singapore Dollar (SGD)'], ['HKD', 'Hong Kong Dollar (HKD)'], ['NOK', 'Norwegian Krone (NOK)'], ['SEK', 'Swedish Krona (SEK)'], ['DKK', 'Danish Krone (DKK)'], ['PLN', 'Polish Zloty (PLN)'], ['CZK', 'Czech Koruna (CZK)'], ['HUF', 'Hungarian Forint (HUF)'], ['TRY', 'Turkish Lira (TRY)'], ['ZAR', 'South African Rand (ZAR)'], ['AED', 'UAE Dirham (AED)'], ['SAR', 'Saudi Riyal (SAR)'], ['THB', 'Thai Baht (THB)'], ['IDR', 'Indonesian Rupiah (IDR)'], ['MYR', 'Malaysian Ringgit (MYR)'], ['PHP', 'Philippine Peso (PHP)'], ['TWD', 'Taiwan Dollar (TWD)'], ['ILS', 'Israeli Shekel (ILS)'], ['CLP', 'Chilean Peso (CLP)'], ['COP', 'Colombian Peso (COP)'], ['ARS', 'Argentine Peso (ARS)'], ['PEN', 'Peruvian Sol (PEN)'], ['RUB', 'Russian Ruble (RUB)'], ['NZD', 'New Zealand Dollar (NZD)'], ['ISK', 'Icelandic Krona (ISK)'], ['HRK', 'Croatian Kuna (HRK)'], ['RON', 'Romanian Leu (RON)'], ['BGN', 'Bulgarian Lev (BGN)'], ['TRY', 'Turkish Lira (TRY)'], ['UAH', 'Ukrainian Hryvnia (UAH)'], ['NGN', 'Nigerian Naira (NGN)'], ['EGP', 'Egyptian Pound (EGP)'], ['PKR', 'Pakistani Rupee (PKR)'], ['BDT', 'Bangladeshi Taka (BDT)'], ['VND', 'Vietnamese Dong (VND)'], ['KWD', 'Kuwaiti Dinar (KWD)'], ['QAR', 'Qatari Riyal (QAR)'], ['OMR', 'Omani Rial (OMR)']] },
+    { key: 'to', label: 'To currency', value: 'EUR', options: [['USD', 'US Dollar (USD)'], ['EUR', 'Euro (EUR)'], ['GBP', 'British Pound (GBP)'], ['JPY', 'Japanese Yen (JPY)'], ['CAD', 'Canadian Dollar (CAD)'], ['AUD', 'Australian Dollar (AUD)'], ['CHF', 'Swiss Franc (CHF)'], ['CNY', 'Chinese Yuan (CNY)'], ['INR', 'Indian Rupee (INR)'], ['MXN', 'Mexican Peso (MXN)'], ['BRL', 'Brazilian Real (BRL)'], ['KRW', 'South Korean Won (KRW)'], ['SGD', 'Singapore Dollar (SGD)'], ['HKD', 'Hong Kong Dollar (HKD)'], ['NOK', 'Norwegian Krone (NOK)'], ['SEK', 'Swedish Krona (SEK)'], ['DKK', 'Danish Krone (DKK)'], ['PLN', 'Polish Zloty (PLN)'], ['CZK', 'Czech Koruna (CZK)'], ['HUF', 'Hungarian Forint (HUF)'], ['TRY', 'Turkish Lira (TRY)'], ['ZAR', 'South African Rand (ZAR)'], ['AED', 'UAE Dirham (AED)'], ['SAR', 'Saudi Riyal (SAR)'], ['THB', 'Thai Baht (THB)'], ['IDR', 'Indonesian Rupiah (IDR)'], ['MYR', 'Malaysian Ringgit (MYR)'], ['PHP', 'Philippine Peso (PHP)'], ['TWD', 'Taiwan Dollar (TWD)'], ['ILS', 'Israeli Shekel (ILS)'], ['CLP', 'Chilean Peso (CLP)'], ['COP', 'Colombian Peso (COP)'], ['ARS', 'Argentine Peso (ARS)'], ['PEN', 'Peruvian Sol (PEN)'], ['RUB', 'Russian Ruble (RUB)'], ['NZD', 'New Zealand Dollar (NZD)'], ['ISK', 'Icelandic Krona (ISK)'], ['HRK', 'Croatian Kuna (HRK)'], ['RON', 'Romanian Leu (RON)'], ['BGN', 'Bulgarian Lev (BGN)'], ['TRY', 'Turkish Lira (TRY)'], ['UAH', 'Ukrainian Hryvnia (UAH)'], ['NGN', 'Nigerian Naira (NGN)'], ['EGP', 'Egyptian Pound (EGP)'], ['PKR', 'Pakistani Rupee (PKR)'], ['BDT', 'Bangladeshi Taka (BDT)'], ['VND', 'Vietnamese Dong (VND)'], ['KWD', 'Kuwaiti Dinar (KWD)'], ['QAR', 'Qatari Riyal (QAR)'], ['OMR', 'Omani Rial (OMR)']] },
+  ],
+  tax: [
+    { key: 'income', label: 'Gross annual income', value: 75000, min: 0, step: 1000 },
+    { key: 'filing', label: 'Filing status', value: 'single', options: [['single', 'Single'], ['married', 'Married Filing Jointly'], ['head', 'Head of Household']] },
+    { key: 'deductions', label: 'Deductions ($)', value: 14600, min: 0, step: 100 },
+    { key: 'state', label: 'State', value: 'none', options: [['none', 'No State Tax'], ['california', 'California'], ['texas', 'Texas'], ['newyork', 'New York'], ['florida', 'Florida'], ['illinois', 'Illinois'], ['pennsylvania', 'Pennsylvania'], ['ohio', 'Ohio'], ['georgia', 'Georgia'], ['northcarolina', 'North Carolina'], ['michigan', 'Michigan']] },
+  ],
+  'credit-card': [
+    { key: 'balance', label: 'Credit card balance', value: 5000, min: 0, step: 100 },
+    { key: 'rate', label: 'Interest rate (APR %)', value: 20, min: 0, step: .1 },
+    { key: 'method', label: 'Pay off method', value: 'amount', options: [['amount', 'Pay a fixed amount'], ['time', 'Pay off within timeframe']] },
+    { key: 'payment', label: 'Monthly payment ($)', value: 200, min: 1, step: 10 },
+    { key: 'payYears', label: 'Pay off in (years)', value: 2, min: 0, step: 1 },
+    { key: 'payMonths', label: 'Pay off in (months)', value: 0, min: 0, max: 11, step: 1 },
+    { key: 'preset', label: 'Quick preset', value: 'custom', options: [['custom', 'Custom amount'], ['interest1', 'Interest + 1% of balance'], ['interest2', 'Interest + 2% of balance'], ['interest3', 'Interest + 3% of balance'], ['interest4', 'Interest + 4% of balance'], ['interest5', 'Interest + 5% of balance']] },
+  ],
+  'credit-cards-payoff': [
+    { key: 'totalBalance', label: 'Total credit card debt', value: 15000, min: 0, step: 100 },
+    { key: 'rate', label: 'Weighted average APR (%)', value: 18, min: 0, step: .1 },
+    { key: 'payment', label: 'Total monthly payment', value: 500, min: 1, step: 50 },
+    { key: 'strategy', label: 'Payoff strategy', value: 'avalanche', options: [['avalanche', 'Avalanche (highest interest first)'], ['snowball', 'Snowball (lowest balance first)']] },
+  ],
+  'debt-payoff': [
+    { key: 'totalBalance', label: 'Total debt amount', value: 25000, min: 0, step: 100 },
+    { key: 'rate', label: 'Average interest rate (%)', value: 12, min: 0, step: .1 },
+    { key: 'payment', label: 'Monthly payment', value: 600, min: 1, step: 50 },
+  ],
+  'student-loan': [
+    { key: 'principal', label: 'Loan amount', value: 50000, min: 0, step: 1000 },
+    { key: 'rate', label: 'Interest rate (%)', value: 5.5, min: 0, step: .01 },
+    { key: 'years', label: 'Repayment term (years)', value: 10, min: 0, step: 1 },
+    { key: 'months', label: 'Repayment term (months)', value: 0, min: 0, max: 11, step: 1 },
+    { key: 'extra', label: 'Extra monthly payment', value: 0, min: 0, step: 50 },
+  ],
+  'personal-loan': [
+    { key: 'principal', label: 'Loan amount', value: 15000, min: 0, step: 500 },
+    { key: 'rate', label: 'Interest rate (%)', value: 8, min: 0, step: .01 },
+    { key: 'years', label: 'Loan term (years)', value: 5, min: 0, step: 1 },
+    { key: 'months', label: 'Loan term (months)', value: 0, min: 0, max: 11, step: 1 },
+  ],
+  'business-loan': [
+    { key: 'principal', label: 'Loan amount', value: 100000, min: 0, step: 5000 },
+    { key: 'rate', label: 'Interest rate (%)', value: 7, min: 0, step: .01 },
+    { key: 'years', label: 'Loan term (years)', value: 5, min: 0, step: 1 },
+    { key: 'months', label: 'Loan term (months)', value: 0, min: 0, max: 11, step: 1 },
+  ],
+  'boat-loan': [
+    { key: 'principal', label: 'Boat price', value: 50000, min: 0, step: 1000 },
+    { key: 'downPayment', label: 'Down payment ($)', value: 10000, min: 0, step: 500 },
+    { key: 'rate', label: 'Interest rate (%)', value: 6.5, min: 0, step: .01 },
+    { key: 'years', label: 'Loan term (years)', value: 10, min: 0, step: 1 },
+    { key: 'months', label: 'Loan term (months)', value: 0, min: 0, max: 11, step: 1 },
+  ],
+  'auto-loan': [
+    { key: 'autoPrice', label: 'Auto price', value: 50000, min: 0, step: 500 },
+    { key: 'term', label: 'Loan term (months)', value: 60, min: 1, step: 1 },
+    { key: 'rate', label: 'Interest rate (%)', value: 5, min: 0, step: .01 },
+    { key: 'downPayment', label: 'Down payment ($)', value: 10000, min: 0, step: 500 },
+    { key: 'tradeIn', label: 'Trade-in value ($)', value: 0, min: 0, step: 500 },
+    { key: 'tradeInOwed', label: 'Amount owed on trade-in ($)', value: 0, min: 0, step: 500 },
+    { key: 'state', label: 'State', value: 'none', options: [['none', 'Calculate manually'], ['AL', 'Alabama'], ['AK', 'Alaska'], ['AZ', 'Arizona'], ['AR', 'Arkansas'], ['CA', 'California'], ['CO', 'Colorado'], ['CT', 'Connecticut'], ['DE', 'Delaware'], ['DC', 'District of Columbia'], ['FL', 'Florida'], ['GA', 'Georgia'], ['HI', 'Hawaii'], ['ID', 'Idaho'], ['IL', 'Illinois'], ['IN', 'Indiana'], ['IA', 'Iowa'], ['KS', 'Kansas'], ['KY', 'Kentucky'], ['LA', 'Louisiana'], ['ME', 'Maine'], ['MD', 'Maryland'], ['MA', 'Massachusetts'], ['MI', 'Michigan'], ['MN', 'Minnesota'], ['MS', 'Mississippi'], ['MO', 'Missouri'], ['MT', 'Montana'], ['NE', 'Nebraska'], ['NV', 'Nevada'], ['NH', 'New Hampshire'], ['NJ', 'New Jersey'], ['NM', 'New Mexico'], ['NY', 'New York'], ['NC', 'North Carolina'], ['ND', 'North Dakota'], ['OH', 'Ohio'], ['OK', 'Oklahoma'], ['OR', 'Oregon'], ['PA', 'Pennsylvania'], ['RI', 'Rhode Island'], ['SC', 'South Carolina'], ['SD', 'South Dakota'], ['TN', 'Tennessee'], ['TX', 'Texas'], ['UT', 'Utah'], ['VT', 'Vermont'], ['VA', 'Virginia'], ['WA', 'Washington'], ['WV', 'West Virginia'], ['WI', 'Wisconsin'], ['WY', 'Wyoming']] },
+    { key: 'salesTax', label: 'Sales tax (%)', value: 3, min: 0, step: .01 },
+    { key: 'fees', label: 'Title, reg. & fees ($)', value: 2800, min: 0, step: 50 },
+    { key: 'incentives', label: 'Cash incentives ($)', value: 0, min: 0, step: 100 },
+    { key: 'includeTaxInLoan', label: 'Include tax & fees in loan', value: 'no', options: [['yes', 'Yes'], ['no', 'No (pay upfront)']] },
+  ],
+  'interest-calculator': [
+    { key: 'principal', label: 'Starting amount', value: 10000, min: 0, step: 100 },
+    { key: 'rate', label: 'Annual interest rate (%)', value: 5, min: 0, step: .01 },
+    { key: 'years', label: 'Time (years)', value: 10, min: 0, step: 1 },
+    { key: 'compound', label: 'Compounding', value: 'monthly', options: [['monthly', 'Monthly'], ['annually', 'Annually'], ['quarterly', 'Quarterly'], ['daily', 'Daily'], ['continuously', 'Continuously']] },
+    { key: 'contribution', label: 'Additional contribution', value: 0, min: 0, step: 50 },
+  ],
+  'compound-interest': [
+    { key: 'principal', label: 'Principal amount', value: 10000, min: 0, step: 100 },
+    { key: 'rate', label: 'Annual interest rate (%)', value: 7, min: 0, step: .01 },
+    { key: 'years', label: 'Time (years)', value: 10, min: 0, step: 1 },
+    { key: 'compound', label: 'Compounding frequency', value: 'monthly', options: [['annually', 'Annually'], ['semiannually', 'Semi-annually'], ['quarterly', 'Quarterly'], ['monthly', 'Monthly'], ['weekly', 'Weekly'], ['daily', 'Daily'], ['continuously', 'Continuously']] },
+  ],
+  'savings': [
+    { key: 'principal', label: 'Initial deposit', value: 10000, min: 0, step: 100 },
+    { key: 'monthly', label: 'Monthly deposit', value: 500, min: 0, step: 50 },
+    { key: 'rate', label: 'Annual interest rate (%)', value: 4.5, min: 0, step: .01 },
+    { key: 'years', label: 'Time (years)', value: 10, min: 0, step: 1 },
+    { key: 'compound', label: 'Compounding', value: 'monthly', options: [['monthly', 'Monthly'], ['annually', 'Annually'], ['quarterly', 'Quarterly']] },
+  ],
+  'cd': [
+    { key: 'principal', label: 'Deposit amount', value: 10000, min: 0, step: 100 },
+    { key: 'rate', label: 'Annual interest rate (%)', value: 4.5, min: 0, step: .01 },
+    { key: 'years', label: 'CD term (years)', value: 5, min: .1, step: 1 },
+    { key: 'compound', label: 'Compounding', value: 'daily', options: [['daily', 'Daily'], ['monthly', 'Monthly'], ['quarterly', 'Quarterly'], ['annually', 'Annually']] },
+    { key: 'penalty', label: 'Early withdrawal penalty (months)', value: 6, min: 0, step: 1 },
+  ],
+  'bond': [
+    { key: 'faceValue', label: 'Face value', value: 1000, min: 0, step: 100 },
+    { key: 'price', label: 'Purchase price', value: 950, min: 0, step: 1 },
+    { key: 'rate', label: 'Coupon rate (%)', value: 5, min: 0, step: .01 },
+    { key: 'years', label: 'Years to maturity', value: 10, min: 1, step: 1 },
+    { key: 'compound', label: 'Coupon frequency', value: 'semiannually', options: [['annually', 'Annually'], ['semiannually', 'Semi-annually'], ['quarterly', 'Quarterly']] },
+  ],
+  'present-value': [
+    { key: 'futureValue', label: 'Future value', value: 100000, min: 0, step: 1000 },
+    { key: 'rate', label: 'Discount rate (%)', value: 6, min: 0, step: .01 },
+    { key: 'years', label: 'Years', value: 10, min: 0, step: 1 },
+  ],
+  'future-value': [
+    { key: 'principal', label: 'Present value', value: 10000, min: 0, step: 100 },
+    { key: 'rate', label: 'Annual rate (%)', value: 7, min: 0, step: .01 },
+    { key: 'years', label: 'Years', value: 10, min: 0, step: 1 },
+  ],
+  'interest-rate': [
+    { key: 'presentValue', label: 'Present value', value: 10000, min: 0, step: 100 },
+    { key: 'futureValue', label: 'Future value', value: 20000, min: 0, step: 100 },
+    { key: 'years', label: 'Years', value: 10, min: 0, step: 1 },
+  ],
+  'payback-period': [
+    { key: 'investment', label: 'Investment amount', value: 50000, min: 0, step: 1000 },
+    { key: 'annualReturn', label: 'Annual return', value: 15000, min: 0, step: 1000 },
+  ],
+  'apr': [
+    { key: 'interest', label: 'Total interest paid', value: 5000, min: 0, step: 100 },
+    { key: 'fees', label: 'Total fees', value: 1000, min: 0, step: 100 },
+    { key: 'principal', label: 'Loan amount', value: 25000, min: 1, step: 100 },
+    { key: 'term', label: 'Loan term (years)', value: 5, min: .1, step: 1 },
+  ],
+  'inflation': [
+    { key: 'amount', label: 'Amount', value: 1000, min: 0, step: 1 },
+    { key: 'rate', label: 'Inflation rate (%)', value: 3, min: 0, step: .01 },
+    { key: 'years', label: 'Years', value: 10, min: 0, step: 1 },
+  ],
+  'finance': [
+    { key: 'presentValue', label: 'Present value', value: 100000, min: 0, step: 1000 },
+    { key: 'futureValue', label: 'Future value', value: 200000, min: 0, step: 1000 },
+    { key: 'rate', label: 'Annual rate (%)', value: 7, min: 0, step: .01 },
+  ],
+  'roi': [
+    { key: 'gain', label: 'Net profit / gain', value: 2500, min: 0, step: 100 },
+    { key: 'cost', label: 'Cost of investment', value: 10000, min: 1, step: 100 },
+  ],
+  'margin': [
+    { key: 'revenue', label: 'Revenue', value: 100000, min: 0, step: 1000 },
+    { key: 'cogs', label: 'Cost of goods sold', value: 60000, min: 0, step: 1000 },
+  ],
+  'discount': [
+    { key: 'price', label: 'Original price', value: 100, min: 0, step: .01 },
+    { key: 'discount', label: 'Discount (%)', value: 20, min: 0, max: 100, step: .01 },
+  ],
+  'amortization': [
+    { key: 'principal', label: 'Loan amount', value: 250000, min: 1, step: 1000 },
+    { key: 'rate', label: 'Interest rate (%)', value: 6.5, min: 0, step: .01 },
+    { key: 'years', label: 'Loan term (years)', value: 30, min: 0, step: 1 },
+    { key: 'months', label: 'Loan term (months)', value: 0, min: 0, max: 11, step: 1 },
+    { key: 'startDate', label: 'Start date', value: '2026-08', type: 'date' },
+    { key: 'extra', label: 'Extra monthly payment', value: 0, min: 0, step: 50 },
+    { key: 'extraYearly', label: 'Extra yearly payment', value: 0, min: 0, step: 100 },
+    { key: 'extraOneTime', label: 'One-time extra payment', value: 0, min: 0, step: 500 },
+    { key: 'oneTimeMonth', label: 'One-time payment month (1-12)', value: 1, min: 1, max: 12, step: 1 },
+  ],
   bmi: commonBody.slice(2),
-  calories: [...commonBody, { key: 'activity', label: 'Activity level', value: '1.55', options: [['1.2', 'Sedentary'], ['1.375', 'Light activity'], ['1.55', 'Moderate activity'], ['1.725', 'Very active'], ['1.9', 'Extra active']] }],
-  'body-fat': [...commonBody, { key: 'neck', label: 'Neck (cm)', value: 38, min: 1, step: .1 }, { key: 'waist', label: 'Waist (cm)', value: 85, min: 1, step: .1 }, { key: 'hip', label: 'Hip (cm, women)', value: 95, min: 1, step: .1 }],
+  calories: [...commonBody, { key: 'activity', label: 'Activity level', value: '1.55', options: [['1.2', 'BMR - Sedentary (little/no exercise)'], ['1.375', 'Light (1-3 times/week)'], ['1.55', 'Moderate (4-5 times/week)'], ['1.725', 'Active (daily exercise)'], ['1.9', 'Very Active (intense 6-7/week)'], ['2.05', 'Extra Active (very intense daily)'], ['2.3', 'Athlete (physical job + training)']] }, { key: 'bodyFat', label: 'Body fat % (for Katch-McArdle)', value: 20, min: 3, max: 60, step: 0.1 }, { key: 'formula', label: 'BMR Formula', value: 'mifflin', options: [['mifflin', 'Mifflin-St Jeor'], ['harris', 'Revised Harris-Benedict'], ['katch', 'Katch-McArdle (needs body fat %)']] }],
+  'body-fat': [...commonBody, { key: 'age', label: 'Age', value: 30, min: 14 }, { key: 'neck', label: 'Neck (cm)', value: 38, min: 1, step: .1 }, { key: 'waist', label: 'Waist (cm)', value: 85, min: 1, step: .1 }, { key: 'hip', label: 'Hip (cm, women)', value: 95, min: 1, step: .1 }],
   'ideal-weight': commonBody.filter((field) => ['sex', 'height'].includes(field.key)),
   'lean-mass': commonBody.filter((field) => ['sex', 'weight', 'height'].includes(field.key)),
   'one-rep-max': [{ key: 'weight', label: 'Weight lifted', value: 80, min: 1, step: .5 }, { key: 'reps', label: 'Repetitions', value: 5, min: 1, max: 15 }],
   'heart-rate': [{ key: 'age', label: 'Age', value: 30, min: 14 }, { key: 'resting', label: 'Resting heart rate', value: 60, min: 30 }, { key: 'intensity', label: 'Target intensity (%)', value: 70, min: 40, max: 100 }],
-  pregnancy: [{ key: 'date', label: 'First day of last period', value: '2026-08-01', type: 'date' }, { key: 'cycle', label: 'Average cycle length (days)', value: 28, min: 20, max: 45 }],
+  pregnancy: [{ key: 'method', label: 'Calculate based on', value: 'lmp', options: [['lmp', 'Last period'], ['duedate', 'Due date'], ['conception', 'Conception date'], ['ultrasound', 'Ultrasound date'], ['ivf', 'IVF transfer date']] }, { key: 'date', label: 'Date', value: '2026-08-01', type: 'date' }, { key: 'cycle', label: 'Cycle length (days)', value: 28, min: 20, max: 45 }, { key: 'usWeeks', label: 'Pregnancy at ultrasound (weeks)', value: 8, min: 4, max: 40 }, { key: 'usDays', label: 'Days', value: 0, min: 0, max: 6 }, { key: 'embryoAge', label: 'Embryo age', value: '5', options: [['3', 'Day 3'], ['5', 'Day 5'], ['6', 'Day 6']] }],
   cycle: [{ key: 'date', label: 'First day of last period', value: '2026-08-01', type: 'date' }, { key: 'cycle', label: 'Average cycle length (days)', value: 28, min: 20, max: 45 }, { key: 'period', label: 'Period length (days)', value: 5, min: 1, max: 10 }],
-  macros: [...commonBody, { key: 'activity', label: 'Activity level', value: '1.55', options: [['1.2', 'Sedentary'], ['1.375', 'Light'], ['1.55', 'Moderate'], ['1.725', 'Very active']] }],
-  protein: [{ key: 'weight', label: 'Weight (kg)', value: 70, min: 1, step: .1 }, { key: 'activity', label: 'Activity', value: '1.2', options: [['0.8', 'Low activity'], ['1.2', 'Regular exercise'], ['1.6', 'Strength / endurance'], ['2', 'Intense training']] }],
-  'calories-burned': [{ key: 'weight', label: 'Weight (kg)', value: 70, min: 1 }, { key: 'minutes', label: 'Duration (minutes)', value: 30, min: 1 }, { key: 'met', label: 'Activity intensity (MET)', value: 8, min: 1, step: .1 }],
+  macros: [...commonBody, { key: 'activity', label: 'Activity level', value: '1.55', options: [['1.2', 'BMR - Sedentary (little/no exercise)'], ['1.375', 'Light (1-3 times/week)'], ['1.55', 'Moderate (4-5 times/week)'], ['1.725', 'Active (daily exercise)'], ['1.9', 'Very Active (intense 6-7/week)'], ['2.05', 'Extra Active (very intense daily)'], ['2.3', 'Athlete (physical job + training)']] }, { key: 'goal', label: 'Your Goal', value: 'maintain', options: [['lose-mild', 'Mild weight loss (0.25 kg/week)'], ['lose', 'Weight loss (0.5 kg/week)'], ['lose-extreme', 'Extreme weight loss (1 kg/week)'], ['maintain', 'Maintain weight'], ['gain-mild', 'Mild weight gain (0.25 kg/week)'], ['gain', 'Weight gain (0.5 kg/week)'], ['gain-extreme', 'Extreme weight gain (1 kg/week)']] }, { key: 'bodyFat', label: 'Body fat % (for Katch-McArdle)', value: 20, min: 3, max: 60, step: 0.1 }],
+  protein: [{ key: 'weight', label: 'Weight (kg)', value: 70, min: 1, step: .1 }, { key: 'activity', label: 'Activity level', value: '1.2', options: [['0.8', 'Sedentary (0.8 g/kg)'], ['1.0', 'Light activity (1.0 g/kg)'], ['1.2', 'Moderate exercise (1.2 g/kg)'], ['1.4', 'Active (1.4 g/kg)'], ['1.6', 'Very active (1.6 g/kg)'], ['1.8', 'Athlete (1.8 g/kg)'], ['2.2', 'Intense training (2.2 g/kg)']] }],
+  'calories-burned': [{ key: 'weight', label: 'Weight (kg)', value: 70, min: 1 }, { key: 'minutes', label: 'Duration (minutes)', value: 30, min: 1 }, { key: 'met', label: 'Activity', value: '8', options: [['1', 'Sitting quietly'], ['1.5', 'Standing relaxed'], ['2', 'Light housework'], ['2.5', 'Walking (2 mph)'], ['3', 'Walking (3 mph)'], ['3.5', 'Walking (3.5 mph)'], ['4', 'Dancing / Yoga'], ['5', 'Walking (4 mph) / Cycling leisure'], ['6', 'Hiking / Light swimming'], ['7', 'Cycling (12-14 mph)'], ['8', 'Jogging / Swimming laps'], ['9.8', 'Running (6 mph)'], ['11', 'Running (7 mph)'], ['12.5', 'Running (8 mph)'], ['15', 'Running (10 mph)']] }],
   bsa: [{ key: 'weight', label: 'Weight (kg)', value: 70, min: 1 }, { key: 'height', label: 'Height (cm)', value: 175, min: 1 }],
   bac: [{ key: 'sex', label: 'Sex', value: 'male', options: [['male', 'Male'], ['female', 'Female']] }, { key: 'weight', label: 'Weight (kg)', value: 70, min: 1 }, { key: 'drinks', label: 'Standard drinks', value: 2, min: 0, step: 1 }, { key: 'hours', label: 'Hours since first drink', value: 2, min: 0, step: .5 }],
   gfr: [{ key: 'age', label: 'Age', value: 45, min: 18 }, { key: 'sex', label: 'Sex', value: 'male', options: [['male', 'Male'], ['female', 'Female']] }, { key: 'creatinine', label: 'Serum creatinine (mg/dL)', value: 1, min: .1, step: .01 }],
-  'pregnancy-weight': [{ key: 'height', label: 'Height (cm)', value: 165, min: 100 }, { key: 'preweight', label: 'Pre-pregnancy weight (kg)', value: 60, min: 30, step: .1 }, { key: 'current', label: 'Current weight (kg)', value: 68, min: 30, step: .1 }, { key: 'week', label: 'Pregnancy week', value: 24, min: 1, max: 42 }],
+  'pregnancy-weight': [{ key: 'height', label: 'Height (cm)', value: 165, min: 100 }, { key: 'preweight', label: 'Pre-pregnancy weight (kg)', value: 60, min: 30, step: .1 }, { key: 'current', label: 'Current weight (kg)', value: 68, min: 30, step: .1 }, { key: 'week', label: 'Pregnancy week', value: 24, min: 1, max: 42 }, { key: 'twins', label: 'Pregnancy type', value: 'singleton', options: [['singleton', 'Singleton'], ['twins', 'Twins']] }],
   'body-type': [{ key: 'bust', label: 'Bust (cm)', value: 92, min: 1, step: .1 }, { key: 'waist', label: 'Waist (cm)', value: 72, min: 1, step: .1 }, { key: 'hip', label: 'Hip (cm)', value: 98, min: 1, step: .1 }],
   roas: [{ key: 'spend', label: 'Ad spend', value: 5000, min: 0, step: .01 }, { key: 'revenue', label: 'Revenue attributed to ads', value: 20000, min: 0, step: .01 }],
   'break-even-roas': [{ key: 'margin', label: 'Gross margin (%)', value: 40, min: .01, max: 100, step: .01 }, { key: 'aov', label: 'Average order value', value: 100, min: 0, step: .01 }],
@@ -48,11 +279,17 @@ const schemas: Record<string, Field[]> = {
   'conversion-rate': [{ key: 'conversions', label: 'Conversions', value: 250, min: 0 }, { key: 'visitors', label: 'Visitors / clicks', value: 10000, min: 1 }],
   'profit-margin': [{ key: 'revenue', label: 'Revenue', value: 50000, min: 0, step: .01 }, { key: 'cogs', label: 'Cost of goods sold', value: 25000, min: 0, step: .01 }, { key: 'expenses', label: 'Other operating expenses', value: 10000, min: 0, step: .01 }],
 };
-const fields = tool.name === 'Army Body Fat Calculator'
-  ? [commonBody[1], commonBody[2], { key: 'waist', label: 'Waist (cm)', value: 85, min: 1, step: .1 }]
-  : tool.name === 'Commission Calculator'
-    ? [{ key: 'income', label: 'Sales amount', value: 50000, min: 0 }, { key: 'deductions', label: 'Base pay', value: 0, min: 0 }, { key: 'rate', label: 'Commission rate (%)', value: 5, min: 0, step: .01 }]
-    : schemas[tool.kind];
+const fields: Field[] = tool.name === 'Army Body Fat Calculator'
+  ? [commonBody[0], commonBody[1], commonBody[2], commonBody[3], { key: 'neck', label: 'Neck (cm)', value: 38, min: 1, step: .1 }, { key: 'waist', label: 'Waist (cm)', value: 85, min: 1, step: .1 }, { key: 'hip', label: 'Hip (cm, women only)', value: 95, min: 1, step: .1 }]
+  : tool.name === 'Body Fat Calculator'
+    ? [commonBody[1], commonBody[2], commonBody[3], { key: 'neck', label: 'Neck (cm)', value: 38, min: 1, step: .1 }, { key: 'waist', label: 'Waist (cm)', value: 85, min: 1, step: .1 }, { key: 'hip', label: 'Hip (cm, women only)', value: 95, min: 1, step: .1 }]
+    : tool.name === 'BMI Calculator' || tool.name === 'Healthy Weight Calculator'
+      ? [commonBody[0], commonBody[1], commonBody[2], commonBody[3], { key: 'ethnicity', label: 'Ethnicity', value: 'european', options: [['european', 'White / European'], ['asian', 'Asian / South Asian'], ['african', 'Black / African'], ['hispanic', 'Hispanic / Latino'], ['other', 'Other']] }]
+      : tool.name === 'Ideal Weight Calculator'
+        ? [commonBody[1], commonBody[3], { key: 'frame', label: 'Frame size', value: 'medium', options: [['small', 'Small'], ['medium', 'Medium'], ['large', 'Large']] }]
+        : tool.name === 'Commission Calculator'
+          ? [{ key: 'income', label: 'Sales amount', value: 50000, min: 0 }, { key: 'deductions', label: 'Base pay', value: 0, min: 0 }, { key: 'rate', label: 'Commission rate (%)', value: 5, min: 0, step: .01 }]
+          : schemas[tool.kind];
 const financial = tool.category === 'Financial';
 const marketing = tool.category === 'Marketing';
 ---
@@ -70,22 +307,495 @@ const marketing = tool.category === 'Marketing';
   </form>
   <div class="hidden border-t bg-[var(--soft)] p-5 sm:p-6" style="border-color:var(--line)" data-general-result aria-live="polite">
     <p class="text-xs font-semibold tracking-[.08em] text-[var(--muted)]">ESTIMATED RESULT</p>
-    <div class="mt-4 grid gap-3 sm:grid-cols-3" data-general-metrics></div>
+    <div class="mt-4 grid gap-3 sm:grid-cols-2" data-general-metrics></div>
     <p class="mt-4 text-xs leading-5 text-[var(--muted)]">{financial ? 'Planning estimate only. Rates, fees, taxes and product rules vary by provider and jurisdiction.' : marketing ? 'Performance estimate only. Use consistent attribution windows, currencies, channels, and revenue definitions when comparing campaigns.' : 'Educational estimate only. This result is not medical advice or a diagnosis.'}</p>
   </div>
 </section>
 
 <script>
   const money = (value: number) => new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(value);
+  const currencyMoney = (value: number, code: string) => new Intl.NumberFormat(undefined, { style: 'currency', currency: code, maximumFractionDigits: 2 }).format(value);
   const number = (value: number, digits = 1) => new Intl.NumberFormat(undefined, { maximumFractionDigits: digits }).format(value);
-  const card = (label: string, value: string, note = '') => `<div class="result-metric"><div class="result-label">${label}</div><div class="result-value">${value}</div>${note ? `<div class="result-note">${note}</div>` : ''}</div>`;
+  const card = (label: string, value: string, note: string | null = '', highlight: boolean | '' = false) => `<div class="result-metric${highlight ? ' result-highlight' : ''}"><div class="result-label">${label}</div><div class="result-value">${value}</div>${note ? `<div class="result-note">${note}</div>` : ''}</div>`;
   const safeDivide = (a: number, b: number, fallback = 0) => (!b || !Number.isFinite(b)) ? fallback : a / b;
   const hasInvalid = (html: string) => !html || /NaN|Infinity|undefined|null/.test(html);
+  if (!document.getElementById('calc-dynamic-styles')) {
+    const style = document.createElement('style');
+    style.id = 'calc-dynamic-styles';
+    style.textContent = `.amortization-wrap{margin-top:1.5rem}.amortization-details{border:1px solid var(--line);border-radius:0.75rem;overflow:hidden;background:var(--panel)}.amortization-toggle{display:flex;align-items:center;gap:0.5rem;padding:0.875rem 1rem;cursor:pointer;font-weight:600;font-size:0.875rem;color:var(--heading);list-style:none;user-select:none}.amortization-toggle:hover{background:var(--soft)}.amortization-toggle::-webkit-details-marker{display:none}.amortization-icon{display:grid;place-items:center;width:2rem;height:2rem;border-radius:0.5rem;background:rgba(79,70,229,0.08);color:#6366f1;flex-shrink:0}.amortization-count{margin-left:auto;font-size:0.75rem;font-weight:500;color:var(--muted);background:var(--soft);padding:0.2rem 0.6rem;border-radius:999px}.amortization-chevron{transition:transform 0.2s}details[open] .amortization-chevron{transform:rotate(180deg)}.amortization-table-wrap{overflow-x:auto;padding:0 1rem 1rem}.amortization-table{width:100%;border-collapse:collapse;font-size:0.8125rem}.amortization-table th{text-align:left;padding:0.625rem 0.75rem;font-weight:600;font-size:0.6875rem;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--line);white-space:nowrap;position:sticky;top:0;background:var(--panel)}.amortization-table td{padding:0.5rem 0.75rem;border-bottom:1px solid var(--line);white-space:nowrap;color:var(--body)}.amortization-table tbody tr:hover{background:var(--soft)}.donut-chart-wrap{margin-top:1.25rem}.donut-title{font-size:0.75rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}.donut-layout{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}.donut-container{flex-shrink:0}.donut-ring{width:140px;height:140px;border-radius:50%;position:relative;display:grid;place-items:center}.donut-hole{width:90px;height:90px;border-radius:50%;background:var(--panel);display:flex;flex-direction:column;align-items:center;justify-content:center;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}.donut-total-label{font-size:0.625rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted)}.donut-total-value{font-size:0.8125rem;font-weight:700;color:var(--heading);margin-top:0.125rem}.donut-legend{display:flex;flex-direction:column;gap:0.5rem;min-width:0}.donut-legend-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8125rem}.donut-swatch{width:10px;height:10px;border-radius:3px;flex-shrink:0}.donut-legend-label{color:var(--body);white-space:nowrap}.donut-legend-value{margin-left:auto;font-weight:600;color:var(--heading);font-variant-numeric:tabular-nums}.donut-legend-pct{font-size:0.75rem;color:var(--muted);min-width:3rem;text-align:right}`;
+    document.head.appendChild(style);
+  }
   document.querySelectorAll<HTMLElement>('[data-general-calculator]').forEach((root) => {
     const form = root.querySelector<HTMLFormElement>('[data-general-form]')!;
     form.addEventListener('submit', (event) => {
       event.preventDefault(); const data = new FormData(form); const n = (key: string) => Number(data.get(key)); const s = (key: string) => String(data.get(key)); const kind = root.dataset.kind; const name = root.dataset.name!; let output = '';
-      if (kind === 'loan') { const p=n('principal'), r=n('rate')/1200, months=n('years')*12, base=r?p*r*(1+r)**months/((1+r)**months-1):p/months, payment=base+n('extra'), payoff=r&&payment>p*r?-Math.log(1-p*r/payment)/Math.log(1+r):months, total=payment*Math.min(months,payoff); output=card('MONTHLY PAYMENT',money(payment))+card('TOTAL INTEREST',money(Math.max(0,total-p)))+card('PAYOFF TIME',`${number(payoff/12,1)} years`); }
+      let amortData: { month: number; payment: number; principal: number; interest: number; balance: number; totalInterest: number }[] | undefined;
+      let donutData: { label: string; value: number; color: string }[] | undefined;
+      if (kind === 'mortgage') {
+        const homePrice = n('homePrice');
+        const downPct = n('downPayment') / 100;
+        const downPayment = homePrice * downPct;
+        const loanAmount = homePrice - downPayment;
+        const r = n('rate') / 1200;
+        const months = n('years') * 12;
+        const basePI = r ? loanAmount * r * (1 + r) ** months / ((1 + r) ** months - 1) : loanAmount / months;
+        const biweekly = s('biweekly') === 'biweekly';
+        const piPayment = basePI;
+         const extraMonthly = n('extra');
+        const extraYearly = n('extraYearly');
+        const extraOneTime = n('extraOneTime');
+        const oneTimeMonth = n('oneTimeMonth');
+        const biweeklyExtra = biweekly ? piPayment / 12 : 0;
+        const taxIncrease = n('taxIncrease') / 100;
+        const insIncrease = n('insuranceIncrease') / 100;
+        const hoaIncrease = n('hoaIncrease') / 100;
+        const otherIncrease = n('otherCostsIncrease') / 100;
+        let balance = loanAmount;
+        let totalPI = 0, totalTax = 0, totalIns = 0, totalPMI = 0, totalHOA = 0, totalOther = 0;
+        const amortRows: { month: number; payment: number; principal: number; interest: number; balance: number; totalInterest: number }[] = [];
+        let currentTax = (homePrice * n('propertyTax') / 100) / 12;
+        let currentIns = n('homeInsurance') / 12;
+        let currentHOA = n('hoa');
+        let currentOther = n('otherCosts');
+        let payoffMonth = months;
+        for (let m = 1; m <= months && balance > 0; m++) {
+          if (m > 1 && (m - 1) % 12 === 0) {
+            currentTax *= (1 + taxIncrease);
+            currentIns *= (1 + insIncrease);
+            currentHOA *= (1 + hoaIncrease);
+            currentOther *= (1 + otherIncrease);
+          }
+          const interest = balance * r;
+          let princ = piPayment - interest;
+          let extra = extraMonthly + biweeklyExtra;
+          if (extraYearly > 0 && m % 12 === 0) extra += extraYearly;
+          if (extraOneTime > 0 && m === oneTimeMonth) extra += extraOneTime;
+          princ += extra;
+          if (princ > balance) princ = balance;
+          balance -= princ;
+          totalPI += piPayment + extra;
+          totalTax += currentTax;
+          totalIns += currentIns;
+          const pmiVal = downPct < 0.2 && balance > 0 ? n('pmi') : 0;
+          totalPMI += pmiVal;
+          totalHOA += currentHOA;
+          totalOther += currentOther;
+          amortRows.push({ month: m, payment: piPayment + extra + currentTax + currentIns + pmiVal + currentHOA + currentOther, principal: princ, interest, balance: Math.max(0, balance), totalInterest: totalPI - (loanAmount - Math.max(0, balance)) });
+          if (balance <= 0) { payoffMonth = m; break; }
+        }
+        const totalMonthly = (piPayment + biweeklyExtra) + extraMonthly + (homePrice * n('propertyTax') / 100) / 12 + n('homeInsurance') / 12 + (downPct < 0.2 ? n('pmi') : 0) + n('hoa') + n('otherCosts');
+        const totalInterest = totalPI - loanAmount;
+        const startMonth = document.querySelector<HTMLInputElement>('[name="startDate"]')?.value || '2026-08';
+        const [startYear, startMon] = startMonth.split('-').map(Number);
+        const payoffDate = new Date(startYear, startMon - 1 + payoffMonth);
+        const payoffLabel = payoffDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        const totalCost = totalPI + totalTax + totalIns + totalPMI + totalHOA + totalOther;
+        const monthlyPI = biweekly ? piPayment * 13 / 12 : piPayment;
+        output = card('MONTHLY PAYMENT', money(biweekly ? piPayment * 13 / 12 : piPayment), biweekly ? 'Biweekly equivalent (P&I)' : 'Principal & interest', true)
+          + card('MONTHLY TAX + INSURANCE', money((homePrice * n('propertyTax') / 100) / 12 + n('homeInsurance') / 12 + n('otherCosts') + (downPct < 0.2 ? n('pmi') : 0) + n('hoa')))
+          + card('TOTAL OUT-OF-POCKET', money(totalMonthly), 'P&I + tax, insurance & costs')
+          + card('PRINCIPAL & INTEREST', money(monthlyPI), 'Monthly (P&I)')
+          + card('PROPERTY TAX', money((homePrice * n('propertyTax') / 100) / 12), 'Monthly (year 1)')
+          + card('HOME INSURANCE', money(n('homeInsurance') / 12), 'Monthly (year 1)')
+          + (downPct < 0.2 && n('pmi') > 0 ? card('PMI INSURANCE', money(n('pmi')), 'Until 20% equity') : '')
+          + (n('hoa') > 0 ? card('HOA FEE', money(n('hoa'))) : '')
+          + (n('otherCosts') > 0 ? card('OTHER COSTS', money(n('otherCosts'))) : '')
+          + card('TOTAL INTEREST', money(totalInterest))
+          + card('TOTAL COST', money(totalCost), 'All payments over loan life')
+          + card('PAYOFF DATE', payoffLabel, `${payoffMonth} payments`)
+          + card('HOME PRICE', money(homePrice))
+          + card('DOWN PAYMENT', money(downPayment), `${(downPct * 100).toFixed(1)}%`)
+          + card('LOAN AMOUNT', money(loanAmount));
+        amortData = amortRows;
+        donutData = [
+          { label: 'Principal', value: loanAmount, color: '#6366f1' },
+          { label: 'Interest', value: Math.max(0, totalInterest), color: '#f59e0b' },
+          { label: 'Property Tax', value: totalTax, color: '#10b981' },
+          { label: 'Insurance', value: totalIns, color: '#3b82f6' },
+          { label: 'PMI', value: totalPMI, color: '#ef4444' },
+          { label: 'HOA & Other', value: totalHOA + totalOther, color: '#8b5cf6' },
+        ];
+      }
+      if (kind === 'amortization') {
+        const p = n('principal'), r = n('rate') / 1200, maxMonths = n('years') * 12 + n('months');
+        const basePayment = r ? p * r * (1 + r) ** maxMonths / ((1 + r) ** maxMonths - 1) : p / maxMonths;
+        const extraM = n('extra'), extraY = n('extraYearly'), extraOT = n('extraOneTime'), otMonth = n('oneTimeMonth');
+        const startVal = s('startDate') || '2026-08';
+        const startParts = startVal.split('-').map(Number);
+        const startDate = new Date(startParts[0], startParts[1] - 1, 1);
+        const amortRows: { month: number; payment: number; principal: number; interest: number; balance: number; totalInterest: number }[] = [];
+        let bal = p, cumInt = 0, totalPaid = 0, payoffMonth = maxMonths;
+        for (let m = 1; m <= maxMonths && bal > 0; m++) {
+          const int = bal * r;
+          let extra = extraM;
+          if (m % 12 === 0) extra += extraY;
+          if (m === otMonth) extra += extraOT;
+          const princ = Math.min(basePayment + extra - int, bal);
+          if (princ < 0) { amortRows.push({ month: m, payment: basePayment, principal: 0, interest: int, balance: bal, totalInterest: cumInt + int }); cumInt += int; totalPaid += basePayment; continue; }
+          bal = Math.max(0, bal - princ);
+          cumInt += int;
+          totalPaid += basePayment + extra;
+          amortRows.push({ month: m, payment: basePayment + extra, principal: princ, interest: int, balance: bal, totalInterest: cumInt });
+          if (bal <= 0) { payoffMonth = m; break; }
+        }
+        const interest = cumInt;
+        const payoffDate = new Date(startDate);
+        payoffDate.setMonth(payoffDate.getMonth() + payoffMonth);
+        output = card('MONTHLY PAYMENT', money(basePayment), 'Principal & interest', true)
+          + card('TOTAL PAYMENTS', money(totalPaid))
+          + card('TOTAL INTEREST', money(interest))
+          + card('PAYOFF DATE', payoffDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }))
+          + card('LOAN AMOUNT', money(p));
+        amortData = amortRows;
+        donutData = [
+          { label: 'Principal', value: p, color: '#6366f1' },
+          { label: 'Interest', value: interest, color: '#f59e0b' },
+        ];
+      }
+      if (kind === 'loan') {
+        const p = n('principal'), r = n('rate'), totalMonths = n('years') * 12 + n('months');
+        const compoundMap: Record<string, number> = { monthly: 12, annually: 1, quarterly: 4, semiannually: 2, semimonthly: 24, biweekly: 26, weekly: 52, daily: 365, continuously: Infinity };
+        const paybackMap: Record<string, number> = { daily: 365, weekly: 52, biweekly: 26, semimonthly: 24, monthly: 12, quarterly: 4, '6months': 2, yearly: 1 };
+        const compound = s('compound');
+        const payback = s('payback');
+        const nComp = compoundMap[compound] ?? 12;
+        const nPay = paybackMap[payback] ?? 12;
+        const rPerPay = nComp === Infinity
+          ? Math.exp(r / 100 / nPay) - 1
+          : Math.pow(1 + r / 100 / nComp, nComp / nPay) - 1;
+        const totalPayPeriods = totalMonths * (nPay / 12);
+        const base = rPerPay ? p * rPerPay * (1 + rPerPay) ** totalPayPeriods / ((1 + rPerPay) ** totalPayPeriods - 1) : p / totalPayPeriods;
+        const payment = base + n('extra');
+        const payoffPeriods = rPerPay && payment > p * rPerPay ? -Math.log(1 - p * rPerPay / payment) / Math.log(1 + rPerPay) : totalPayPeriods;
+        const total = payment * Math.min(totalPayPeriods, payoffPeriods);
+        const totalInterest = Math.max(0, total - p);
+        const amortRows: { month: number; payment: number; principal: number; interest: number; balance: number; totalInterest: number }[] = [];
+        let bal = p, cumInt = 0;
+        for (let m = 1; m <= Math.ceil(payoffPeriods); m++) {
+          const int = bal * rPerPay;
+          const princ = Math.min(payment - int, bal);
+          bal = Math.max(0, bal - princ);
+          cumInt += int;
+          amortRows.push({ month: m, payment, principal: princ, interest: int, balance: bal, totalInterest: cumInt });
+        }
+        const payoffYears = (payoffPeriods / nPay);
+        output = card('PAYMENT AMOUNT', money(payment), `Every ${payback === 'monthly' ? 'month' : payback}`, true)
+          + card('TOTAL PAYMENTS', money(total))
+          + card('TOTAL INTEREST', money(totalInterest))
+          + card('PAYOFF TIME', `${number(payoffYears, 2)} years (${Math.round(payoffPeriods)} payments)`)
+          + card('LOAN AMOUNT', money(p));
+        amortData = amortRows;
+        donutData = [
+          { label: 'Principal', value: p, color: '#6366f1' },
+          { label: 'Interest', value: totalInterest, color: '#f59e0b' },
+        ];
+      }
+      if (kind === 'auto-loan') {
+        const price = n('autoPrice'), down = n('downPayment'), trade = n('tradeIn'), tradeOwed = n('tradeInOwed'), incentives = n('incentives');
+        const stateTaxRates: Record<string, number> = { none: n('salesTax') / 100, AL: 0.02, AK: 0, AZ: 0.056, AR: 0.065, CA: 0.0725, CO: 0.029, CT: 0.0635, DE: 0, FL: 0.06, GA: 0.04, HI: 0.04, ID: 0.06, IL: 0.0625, IN: 0.07, IA: 0.06, KS: 0.065, KY: 0.06, LA: 0.0445, ME: 0.055, MD: 0.06, MA: 0.0625, MI: 0.06, MN: 0.06875, MS: 0.07, MO: 0.04225, MT: 0, NE: 0.055, NV: 0.0685, NH: 0, NJ: 0.06625, NM: 0.05125, NY: 0.04, NC: 0.0475, ND: 0.05, OH: 0.0575, OK: 0.045, OR: 0, PA: 0.06, RI: 0.07, SC: 0.06, SD: 0.042, TN: 0.07, TX: 0.0625, UT: 0.061, VT: 0.06, VA: 0.053, WA: 0.065, WV: 0.06, WI: 0.05, WY: 0.04 };
+        const taxRate = stateTaxRates[s('state')] ?? 0;
+        const includeTax = s('includeTaxInLoan') === 'yes';
+        const netTrade = Math.max(0, trade - tradeOwed);
+        const noTradeInStates = ['CA', 'DC', 'HI', 'KY', 'MD', 'MI', 'MT', 'VA'];
+        const taxablePrice = noTradeInStates.includes(s('state')) ? price : Math.max(0, price - netTrade);
+        const salesTax = taxablePrice * taxRate;
+        const upfrontPayment = down + netTrade + incentives + (includeTax ? 0 : salesTax + n('fees'));
+        const loanBase = price - down - netTrade - incentives;
+        const loanAmount = includeTax ? loanBase + salesTax + n('fees') : loanBase;
+        const r = n('rate') / 1200, months = n('term');
+        const payment = r ? loanAmount * r * (1 + r) ** months / ((1 + r) ** months - 1) : loanAmount / months;
+        const totalInterest = Math.max(0, payment * months - loanAmount);
+        const totalPayments = payment * months;
+        const totalCost = price + salesTax + n('fees') - incentives + totalInterest;
+        const amortRows: { month: number; payment: number; principal: number; interest: number; balance: number; totalInterest: number }[] = [];
+        let bal = loanAmount, cumInt = 0;
+        for (let m = 1; m <= months; m++) {
+          const int = bal * r;
+          const princ = payment - int;
+          bal = Math.max(0, bal - princ);
+          cumInt += int;
+          amortRows.push({ month: m, payment, principal: princ, interest: int, balance: bal, totalInterest: cumInt });
+        }
+        output = card('MONTHLY PAYMENT', money(payment), 'Principal & interest', true)
+          + card('TOTAL LOAN AMOUNT', money(loanAmount))
+          + card('SALES TAX', money(salesTax), s('state') === 'none' ? 'Manual rate' : s('state'))
+          + card('UPFRONT PAYMENT', money(upfrontPayment), 'Down + net trade-in + incentives' + (includeTax ? '' : ' + tax + fees'))
+          + card('NET TRADE-IN', money(netTrade), tradeOwed > 0 ? `Value ${money(trade)} − owed ${money(tradeOwed)}` : 'Trade-in value')
+          + card('TOTAL PAYMENTS', money(totalPayments), `${months} payments`)
+          + card('TOTAL INTEREST', money(totalInterest))
+          + card('TOTAL COST', money(totalCost), 'Price + interest + tax + fees − incentives');
+        amortData = amortRows;
+        donutData = [
+          { label: 'Loan Amount', value: loanAmount, color: '#6366f1' },
+          { label: 'Total Interest', value: totalInterest, color: '#f59e0b' },
+          { label: 'Down Payment', value: down, color: '#10b981' },
+          { label: 'Sales Tax', value: salesTax, color: '#3b82f6' },
+          { label: 'Fees', value: n('fees'), color: '#8b5cf6' },
+        ];
+      }
+      if (kind === 'credit-card') {
+        const balance = n('balance'), r = n('rate') / 1200, method = s('method');
+        const preset = s('preset');
+        let monthlyPayment = n('payment');
+        if (preset !== 'custom' && method === 'amount') {
+          const pctMap: Record<string, number> = { interest1: 0.01, interest2: 0.02, interest3: 0.03, interest4: 0.04, interest5: 0.05 };
+          monthlyPayment = balance * r + balance * (pctMap[preset] || 0);
+        }
+        if (method === 'time') {
+          const years = n('payYears') || 0, months = n('payMonths') || 0;
+          const totalMonths = Math.max(1, years * 12 + months);
+          const payment = balance * r / (1 - Math.pow(1 + r, -totalMonths));
+          const totalPaid = payment * totalMonths;
+          const totalInterest = totalPaid - balance;
+          output = card('MONTHLY PAYMENT', money(payment), 'To pay off in ' + totalMonths + ' months', true)
+            + card('TOTAL INTEREST', money(totalInterest))
+            + card('TOTAL PAID', money(totalPaid))
+            + card('PAYOFF TIME', `${totalMonths} months (${number(totalMonths / 12, 1)} years)`);
+        } else {
+          if (monthlyPayment <= balance * r) {
+            output = card('WARNING', 'Payment too low', 'You must pay more than the monthly interest');
+          } else {
+            const months = -Math.log(1 - balance * r / monthlyPayment) / Math.log(1 + r);
+            const totalPaid = monthlyPayment * months;
+            const totalInterest = totalPaid - balance;
+            output = card('TIME TO PAY OFF', `${number(months, 0)} months (${number(months / 12, 1)} years)`, null, true)
+              + card('TOTAL INTEREST', money(totalInterest))
+              + card('TOTAL PAID', money(totalPaid))
+              + card('MONTHLY PAYMENT', money(monthlyPayment));
+            if (preset !== 'custom') {
+              const interestOnly = balance * r;
+              output += card('INTEREST ONLY', money(interestOnly), 'Minimum to avoid growing balance');
+            }
+          }
+        }
+      }
+      if (kind === 'credit-cards-payoff') {
+        const debt = n('totalBalance'), r = n('rate') / 1200, payment = n('payment');
+        const strategy = s('strategy');
+        const months = -Math.log(1 - debt * r / payment) / Math.log(1 + r);
+        const totalPaid = payment * months;
+        const totalInterest = totalPaid - debt;
+        output = card('TIME TO DEBT FREE', `${number(months, 0)} months (${number(months / 12, 1)} years)`, strategy === 'avalanche' ? 'Avalanche method' : 'Snowball method', true)
+          + card('TOTAL INTEREST', money(totalInterest))
+          + card('TOTAL PAID', money(totalPaid))
+          + card('MONTHLY PAYMENT', money(payment));
+      }
+      if (kind === 'debt-payoff') {
+        const debt = n('totalBalance'), r = n('rate') / 1200, payment = n('payment');
+        if (payment <= debt * r) {
+          output = card('WARNING', 'Payment too low', 'You must pay more than the monthly interest');
+        } else {
+          const months = -Math.log(1 - debt * r / payment) / Math.log(1 + r);
+          const totalPaid = payment * months;
+          const totalInterest = totalPaid - debt;
+          output = card('TIME TO PAY OFF', `${number(months, 0)} months (${number(months / 12, 1)} years)`, null, true)
+            + card('TOTAL INTEREST', money(totalInterest))
+            + card('TOTAL PAID', money(totalPaid))
+            + card('DEBT FREE DATE', new Date(Date.now() + months * 30.44 * 864e5).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }));
+        }
+      }
+      if (kind === 'student-loan' || kind === 'personal-loan' || kind === 'business-loan' || kind === 'boat-loan') {
+        const p = n('principal'), r = n('rate') / 1200, months = n('years') * 12 + n('months');
+        const base = r ? p * r * (1 + r) ** months / ((1 + r) ** months - 1) : p / months;
+        const extra = kind === 'student-loan' ? n('extra') : 0;
+        const payment = base + extra;
+        const payoff = r && payment > p * r ? -Math.log(1 - p * r / payment) / Math.log(1 + r) : months;
+        const total = payment * Math.min(months, payoff);
+        const totalInterest = Math.max(0, total - p);
+        const amortRows: { month: number; payment: number; principal: number; interest: number; balance: number; totalInterest: number }[] = [];
+        let bal = p, cumInt = 0;
+        for (let m = 1; m <= Math.ceil(payoff); m++) {
+          const int = bal * r;
+          const princ = Math.min(payment - int, bal);
+          bal = Math.max(0, bal - princ);
+          cumInt += int;
+          amortRows.push({ month: m, payment, principal: princ, interest: int, balance: bal, totalInterest: cumInt });
+        }
+        output = card('MONTHLY PAYMENT', money(payment), 'Principal & interest', true)
+          + card('TOTAL INTEREST', money(totalInterest))
+          + card('TOTAL PAID', money(total))
+          + card('PAYOFF TIME', `${number(payoff / 12, 1)} years`)
+          + card('LOAN AMOUNT', money(p));
+        amortData = amortRows;
+        donutData = [
+          { label: 'Principal', value: p, color: '#6366f1' },
+          { label: 'Interest', value: totalInterest, color: '#f59e0b' },
+        ];
+      }
+      if (kind === 'interest-calculator' || kind === 'compound-interest' || kind === 'savings' || kind === 'cd') {
+        const p = n('principal'), r = n('rate') / 100, years = n('years');
+        const compoundMap: Record<string, number> = { annually: 1, semiannually: 2, quarterly: 4, monthly: 12, weekly: 52, daily: 365, continuously: Infinity };
+        const freq = kind === 'cd' ? (n('penalty') || 0) : 0;
+        const cp = compoundMap[s('compound')] || 12;
+        const monthlyContrib = kind === 'savings' ? (n('monthly') || 0) : 0;
+        let fv: number;
+        if (cp === Infinity) {
+          fv = p * Math.exp(r * years);
+        } else {
+          fv = p * Math.pow(1 + r / cp, cp * years);
+        }
+        if (monthlyContrib > 0) {
+          const mr = r / 12;
+          fv += mr > 0 ? monthlyContrib * ((Math.pow(1 + mr, years * 12) - 1) / mr) : monthlyContrib * years * 12;
+        }
+        const contributed = p + monthlyContrib * years * 12;
+        const interest = fv - contributed;
+        output = card('ENDING BALANCE', money(fv), null, true)
+          + card('TOTAL CONTRIBUTIONS', money(contributed))
+          + card('TOTAL INTEREST', money(interest))
+          + card('ANNUAL RETURN', `${number(r * 100, 2)}%`);
+        if (kind === 'cd' && freq > 0) {
+          const penaltyMonths = freq;
+          const penaltyDays = penaltyMonths * 30;
+          const earlyInterest = Math.max(0, interest * (penaltyDays / (years * 365)));
+          output += card('EARLY WITHDRAWAL PENALTY', money(earlyInterest), `~${penaltyMonths} months interest`);
+        }
+      }
+      if (kind === 'bond') {
+        const face = n('faceValue'), price = n('price'), couponRate = n('rate') / 100, years = n('years');
+        const compoundMap: Record<string, number> = { annually: 1, semiannually: 2, quarterly: 4 };
+        const cp = compoundMap[s('compound')] || 2;
+        const couponPayment = face * couponRate / cp;
+        const totalCoupons = couponPayment * cp * years;
+        const capitalGain = face - price;
+        const totalReturn = totalCoupons + capitalGain;
+        const yieldToMaturity = ((face - price) / price + couponRate) / years * 100;
+        output = card('COUPON PAYMENT', money(couponPayment), `Every ${cp === 1 ? 'year' : cp === 2 ? '6 months' : '3 months'}`, true)
+          + card('TOTAL COUPONS', money(totalCoupons))
+          + card('CAPITAL GAIN', money(capitalGain))
+          + card('TOTAL RETURN', money(totalReturn))
+          + card('YIELD TO MATURITY', `${number(yieldToMaturity, 2)}%`);
+      }
+      if (kind === 'present-value') {
+        const fv = n('futureValue'), r = n('rate') / 100, years = n('years');
+        const pv = fv / Math.pow(1 + r, years);
+        output = card('PRESENT VALUE', money(pv), null, true)
+          + card('FUTURE VALUE', money(fv))
+          + card('DISCOUNT FACTOR', number(1 / Math.pow(1 + r, years), 4));
+      }
+      if (kind === 'future-value') {
+        const p = n('principal'), r = n('rate') / 100, years = n('years');
+        const fv = p * Math.pow(1 + r, years);
+        output = card('FUTURE VALUE', money(fv), null, true)
+          + card('PRESENT VALUE', money(p))
+          + card('TOTAL INTEREST', money(fv - p));
+      }
+      if (kind === 'interest-rate') {
+        const pv = n('presentValue'), fv = n('futureValue'), years = n('years');
+        const rate = (Math.pow(fv / pv, 1 / years) - 1) * 100;
+        output = card('ANNUAL RATE', `${number(rate, 2)}%`, null, true)
+          + card('PRESENT VALUE', money(pv))
+          + card('FUTURE VALUE', money(fv));
+      }
+      if (kind === 'payback-period') {
+        const investment = n('investment'), annualReturn = n('annualReturn');
+        const years = annualReturn > 0 ? investment / annualReturn : 0;
+        output = card('PAYBACK PERIOD', `${number(years, 1)} years`, null, true)
+          + card('INVESTMENT', money(investment))
+          + card('ANNUAL RETURN', money(annualReturn));
+      }
+      if (kind === 'apr') {
+        const interest = n('interest'), fees = n('fees'), principal = n('principal'), term = n('years');
+        const totalCost = interest + fees;
+        const apr = (totalCost / principal / term) * 100;
+        output = card('APR', `${number(apr, 2)}%`, null, true)
+          + card('TOTAL INTEREST', money(interest))
+          + card('TOTAL FEES', money(fees))
+          + card('TOTAL COST', money(totalCost));
+      }
+      if (kind === 'inflation') {
+        const amount = n('amount'), rate = n('rate') / 100, years = n('years');
+        const future = amount * Math.pow(1 + rate, years);
+        const purchasing = amount / Math.pow(1 + rate, years);
+        output = card('FUTURE COST', money(future), null, true)
+          + card('PURCHASING POWER', money(purchasing), `In ${years} years`)
+          + card('INFLATION IMPACT', money(future - amount));
+      }
+      if (kind === 'finance') {
+        const pv = n('presentValue'), fv = n('futureValue'), r = n('rate') / 100;
+        const years = Math.log(fv / pv) / Math.log(1 + r);
+        output = card('TIME NEEDED', `${number(years, 1)} years`, null, true)
+          + card('PRESENT VALUE', money(pv))
+          + card('FUTURE VALUE', money(fv));
+      }
+      if (kind === 'roi') {
+        const gain = n('gain'), cost = n('cost');
+        const roi = cost > 0 ? (gain / cost) * 100 : 0;
+        output = card('ROI', `${number(roi, 2)}%`, null, true)
+          + card('NET PROFIT', money(gain))
+          + card('COST OF INVESTMENT', money(cost));
+      }
+      if (kind === 'margin') {
+        const revenue = n('revenue'), cogs = n('cogs');
+        const grossProfit = revenue - cogs;
+        const grossMargin = revenue > 0 ? (grossProfit / revenue) * 100 : 0;
+        output = card('GROSS MARGIN', `${number(grossMargin, 2)}%`, null, true)
+          + card('GROSS PROFIT', money(grossProfit))
+          + card('REVENUE', money(revenue));
+      }
+      if (kind === 'discount') {
+        const price = n('price'), discountPct = n('discount') / 100;
+        const savings = price * discountPct;
+        const finalPrice = price - savings;
+        output = card('FINAL PRICE', money(finalPrice), null, true)
+          + card('YOU SAVE', money(savings))
+          + card('DISCOUNT', `${number(discountPct * 100, 1)}%`);
+      }
+      if (kind === 'percentage') { const cost=n('cost'), final=n('final'), change=(final-cost)/cost*100; output=card(name.includes('Margin')?'GROSS MARGIN':'PERCENT CHANGE',`${number(name.includes('Margin')?(final-cost)/final*100:change,2)}%`)+card('DIFFERENCE',money(final-cost))+card('FINAL VALUE',money(final)); }
+      if (kind === 'debt-ratio') { const income=n('income'), debt=n('debt'), housing=n('housing'); output=card('DEBT-TO-INCOME',`${number(safeDivide(debt+housing,income)*100,1)}%`)+card('HOUSING RATIO',`${number(safeDivide(housing,income)*100,1)}%`)+card('AFTER FIXED COSTS',money(income-debt-housing)); }
+      if (kind === 'salary') {
+        const amount = n('amount'), f = s('frequency'), hours = n('hours'), weeks = n('weeks');
+        const annual = f === 'hour' ? amount * hours * weeks : f === 'week' ? amount * weeks : f === 'month' ? amount * 12 : amount;
+        const federalTaxRate = n('federalTax') / 100;
+        const stateTaxRate = n('stateTax') / 100;
+        const otherDeductions = n('otherDeductions');
+        const federalTax = annual * federalTaxRate;
+        const stateTax = annual * stateTaxRate;
+        const totalTax = federalTax + stateTax + otherDeductions;
+        const netAnnual = Math.max(0, annual - totalTax);
+        output = card('GROSS ANNUAL', money(annual), null, true)
+          + card('GROSS MONTHLY', money(annual / 12))
+          + card('FEDERAL TAX', money(federalTax), `${number(federalTaxRate * 100, 1)}%`)
+          + card('STATE TAX', money(stateTax), `${number(stateTaxRate * 100, 1)}%`)
+          + card('OTHER DEDUCTIONS', money(otherDeductions))
+          + card('NET ANNUAL', money(netAnnual))
+          + card('NET MONTHLY', money(netAnnual / 12))
+          + card('NET WEEKLY', money(netAnnual / 52));
+      }
+      if (kind === 'lease') { const months=n('months'), depreciation=(n('value')-n('residual'))/months, finance=(n('value')+n('residual'))*n('rate')/2400, payment=depreciation+finance; output=card('MONTHLY PAYMENT',money(payment))+card('TOTAL PAYMENTS',money(payment*months))+card('DEPRECIATION / MONTH',money(depreciation)); }
+      if (kind === 'depreciation') { const annual=(n('value')-n('residual'))/n('years'), current=Math.max(n('residual'),n('value')-annual*n('elapsed')); output=card('CURRENT VALUE',money(current))+card('ANNUAL DEPRECIATION',money(annual))+card('ACCUMULATED',money(n('value')-current)); }
+      if (kind === 'budget') { const spent=n('housing')+n('needs')+n('wants')+n('savings'), left=n('income')-spent; output=card('MONEY LEFT',money(left))+card('TOTAL ALLOCATED',money(spent))+card('SAVINGS RATE',`${number(safeDivide(n('savings'),n('income'))*100,1)}%`); }
+      if (kind === 'currency') {
+        const amount = n('amount'), from = s('from'), to = s('to');
+        const rates: Record<string, number> = { USD: 1, EUR: 0.92, GBP: 0.79, JPY: 149.5, CAD: 1.36, AUD: 1.53, CHF: 0.88, CNY: 7.24, INR: 83.1, MXN: 17.15, BRL: 4.97, KRW: 1330, SGD: 1.34, HKD: 7.82, NOK: 10.55, SEK: 10.42, DKK: 6.87, PLN: 3.99, CZK: 22.5, HUF: 358, TRY: 28.5, ZAR: 18.65, AED: 3.67, SAR: 3.75, THB: 35.2, IDR: 15450, MYR: 4.72, PHP: 56.2, TWD: 31.5, ILS: 3.72, CLP: 880, COP: 3950, ARS: 350, PEN: 3.72, RUB: 91.5, NZD: 1.64, ISK: 137, RON: 4.57, BGN: 1.8, UAH: 37.5, NGN: 780, EGP: 30.9, PKR: 285, BDT: 110, VND: 24300, KWD: 0.307, QAR: 3.64, OMR: 0.385 };
+        const converted = amount / rates[from] * rates[to];
+        output = card('CONVERTED VALUE', currencyMoney(converted, to), null, true)
+          + card('EXCHANGE RATE', `1 ${from} = ${number(rates[to] / rates[from], 4)} ${to}`)
+          + card('AMOUNT', `${number(amount, 2)} ${from}`);
+      }
+      if (kind === 'tax') {
+        const income = n('income'), filing = s('filing'), deductions = n('deductions'), state = s('state');
+        const taxable = Math.max(0, income - deductions);
+        const federalBrackets: [number, number][] = filing === 'married' ? [[23200, .10], [94300, .12], [201050, .22], [383900, .24], [487450, .32], [731200, .35], [Infinity, .37]] : filing === 'head' ? [[16550, .10], [63100, .12], [100500, .22], [191950, .24], [243725, .32], [609350, .35], [Infinity, .37]] : [[11600, .10], [47150, .12], [100525, .22], [191950, .24], [243725, .32], [609350, .35], [Infinity, .37]];
+        let federalTax = 0, remaining = taxable;
+        for (const [limit, rate] of federalBrackets) {
+          const bracketSize = limit - (federalBrackets.indexOf([limit, rate]) > 0 ? federalBrackets[federalBrackets.indexOf([limit, rate]) - 1][0] : 0);
+          const taxableInBracket = Math.min(remaining, bracketSize);
+          federalTax += taxableInBracket * rate;
+          remaining -= taxableInBracket;
+          if (remaining <= 0) break;
+        }
+        const stateTaxRates: Record<string, number> = { none: 0, california: .093, texas: 0, newyork: .0685, florida: 0, illinois: .0495, pennsylvania: .0307, ohio: .04, georgia: .0549, northcarolina: .045, michigan: .0425 };
+        const stateTax = taxable * (stateTaxRates[state] || 0);
+        const totalTax = federalTax + stateTax;
+        const netIncome = income - totalTax;
+        output = card('GROSS INCOME', money(income), null, true)
+          + card('FEDERAL TAX', money(federalTax), `${number(federalTax / income * 100, 1)}% of income`)
+          + card('STATE TAX', money(stateTax), `${state === 'none' ? 'No state tax' : state}`)
+          + card('TOTAL TAX', money(totalTax))
+          + card('EFFECTIVE TAX RATE', `${number(totalTax / income * 100, 1)}%`)
+          + card('NET INCOME', money(netIncome));
+      }
       if (kind === 'investment') { const p=n('principal'), c=n('monthly'), r=n('rate')/1200, months=n('years')*12, fv=p*(1+r)**months+(r?c*((1+r)**months-1)/r:c*months), contributed=p+c*months; output=card('ENDING BALANCE',money(fv))+card('CONTRIBUTIONS',money(contributed))+card('ESTIMATED GROWTH',money(fv-contributed)); }
       if (kind === 'simple-interest') { const interest=n('principal')*n('rate')/100*n('years'); output=card('TOTAL INTEREST',money(interest))+card('ENDING BALANCE',money(n('principal')+interest))+card('ANNUAL INTEREST',money(safeDivide(interest,n('years')))); }
       if (kind === 'percentage') { const cost=n('cost'), final=n('final'), change=(final-cost)/cost*100; output=card(name.includes('Margin')?'GROSS MARGIN':'PERCENT CHANGE',`${number(name.includes('Margin')?(final-cost)/final*100:change,2)}%`)+card('DIFFERENCE',money(final-cost))+card('FINAL VALUE',money(final)); }
@@ -94,23 +804,162 @@ const marketing = tool.category === 'Marketing';
       if (kind === 'lease') { const months=n('months'), depreciation=(n('value')-n('residual'))/months, finance=(n('value')+n('residual'))*n('rate')/2400, payment=depreciation+finance; output=card('MONTHLY PAYMENT',money(payment))+card('TOTAL PAYMENTS',money(payment*months))+card('DEPRECIATION / MONTH',money(depreciation)); }
       if (kind === 'depreciation') { const annual=(n('value')-n('residual'))/n('years'), current=Math.max(n('residual'),n('value')-annual*n('elapsed')); output=card('CURRENT VALUE',money(current))+card('ANNUAL DEPRECIATION',money(annual))+card('ACCUMULATED',money(n('value')-current)); }
       if (kind === 'budget') { const spent=n('housing')+n('needs')+n('wants')+n('savings'), left=n('income')-spent; output=card('MONEY LEFT',money(left))+card('TOTAL ALLOCATED',money(spent))+card('SAVINGS RATE',`${number(safeDivide(n('savings'),n('income'))*100,1)}%`); }
-      if (kind === 'currency') { const result=name.includes('Inflation')?n('amount')*(1+n('rate')/100)**n('years'):n('amount')*n('rate'); output=card('CONVERTED VALUE',money(result))+card('STARTING VALUE',money(n('amount')))+card('CHANGE',money(result-n('amount'))); }
+      if (kind === 'currency') { const from=s('from'),to=s('to'); const rates: Record<string, number> = { USD: 1, EUR: 0.92, GBP: 0.79, JPY: 149.5, CAD: 1.36, AUD: 1.53, CHF: 0.88, CNY: 7.24, INR: 83.1 }; const result=n('amount')/rates[from]*rates[to]; output=card('CONVERTED VALUE',currencyMoney(result,to))+card('EXCHANGE RATE',`1 ${from} = ${number(rates[to]/rates[from],4)} ${to}`)+card('AMOUNT',`${number(n('amount'),2)} ${from}`); }
       if (kind === 'tax') { const taxable=Math.max(0,n('income')-n('deductions')), tax=taxable*n('rate')/100; output=name.includes('Commission')?card('COMMISSION',money(tax))+card('TOTAL COMPENSATION',money(tax+n('deductions')))+card('COMMISSION RATE',`${number(n('rate'),2)}%`):name.includes('Sales Tax')||name.includes('VAT')?card('TAX AMOUNT',money(tax))+card('TOTAL WITH TAX',money(n('income')+tax))+card('TAX RATE',`${number(n('rate'),2)}%`):card('ESTIMATED TAX',money(tax))+card('AFTER TAX',money(n('income')-tax))+card('TAXABLE AMOUNT',money(taxable)); }
-      if (kind === 'bmi') { const h=n('height')/100, bmi=safeDivide(n('weight'),h**2), category=bmi<18.5?'Underweight':bmi<25?'Healthy range':bmi<30?'Overweight':'Obesity range'; output=card('BMI',number(bmi,1),category)+card('HEALTHY WEIGHT',`${number(18.5*h*h,1)}–${number(24.9*h*h,1)} kg`)+card('BMI PRIME',number(safeDivide(bmi,25),2)); }
-      if (kind === 'calories' || kind === 'macros') { const bmr=10*n('weight')+6.25*n('height')-5*n('age')+(s('sex')==='male'?5:-161), tdee=bmr*n('activity'); output=kind==='macros'?card('DAILY CALORIES',`${number(tdee,0)} kcal`)+card('PROTEIN',`${number(tdee*.25/4,0)} g`)+card('CARBS / FAT',`${number(tdee*.45/4,0)} g / ${number(tdee*.3/9,0)} g`):card('BMR',`${number(bmr,0)} kcal`)+card('MAINTENANCE',`${number(tdee,0)} kcal`)+card('MODERATE LOSS',`${number(Math.max(1200,tdee-500),0)} kcal`); }
-      if (kind === 'body-fat') { const female=s('sex')==='female'; let bf=0; if(name.includes('Army')) { const waist=n('waist')/2.54, pounds=n('weight')*2.20462; bf=female?1.27*waist-.015*pounds-9.15:1.99*waist-.12*pounds-26.97; } else { const h=n('height')/2.54, neck=n('neck')/2.54, waist=n('waist')/2.54, hip=n('hip')/2.54; bf=female?163.205*Math.log10(waist+hip-neck)-97.684*Math.log10(h)-78.387:86.01*Math.log10(waist-neck)-70.041*Math.log10(h)+36.76; } output=card('BODY FAT',`${number(bf,1)}%`)+card('FAT MASS',`${number(n('weight')*bf/100,1)} kg`)+card('LEAN MASS',`${number(n('weight')*(1-bf/100),1)} kg`); }
-      if (kind === 'ideal-weight') { const inches=n('height')/2.54, extra=Math.max(0,inches-60), female=s('sex')==='female', devine=(female?45.5:50)+2.3*extra, h=n('height')/100; output=card('DEVINE ESTIMATE',`${number(devine,1)} kg`)+card('BMI-BASED RANGE',`${number(18.5*h*h,1)}–${number(24.9*h*h,1)} kg`)+card('HEIGHT',`${number(inches,1)} in`); }
-      if (kind === 'lean-mass') { const female=s('sex')==='female', lbm=female ? .252*n('weight')+.473*n('height')-48.3 : .407*n('weight')+.267*n('height')-19.2; output=card('LEAN BODY MASS',`${number(lbm,1)} kg`)+card('ESTIMATED FAT MASS',`${number(n('weight')-lbm,1)} kg`)+card('LEAN PERCENT',`${number(safeDivide(lbm,n('weight'))*100,1)}%`); }
+      if (kind === 'bmi') { const h=n('height')/100, bmi=safeDivide(n('weight'),h**2), eth=s('ethnicity')||'european'; const isAsian=eth==='asian'; const asianOver=isAsian?23:25, asianObese1=isAsian?27.5:30, asianObese2=isAsian?32.5:35, asianObese3=isAsian?37.5:40; let category=bmi<18.5?'Underweight':bmi<asianOver?(isAsian?'Healthy (Asian standard)':'Healthy range'):bmi<asianObese1?'Overweight':bmi<asianObese2?'Obese Class I':bmi<asianObese3?'Obese Class II':'Obese Class III'; const healthyLow=isAsian?18.5:18.5, healthyHigh=isAsian?22.9:24.9; output=card('BMI',number(bmi,1),category)+card('HEALTHY WEIGHT',`${number(healthyLow*h*h,1)}–${number(healthyHigh*h*h,1)} kg`)+card('BMI PRIME',number(safeDivide(bmi,25),2))+(isAsian?card('ASIAN NOTE','Lower cutoffs apply','WHO recommends BMI 23+ as overweight for Asian populations',''):card('WHO CLASSIFICATION',bmi<18.5?'Underweight':bmi<25?'Normal':bmi<30?'Overweight':'Obese','Based on WHO adult BMI categories','')); }
+      if (kind === 'calories' || kind === 'macros') { const formula=s('formula')||'mifflin'; const mf=10*n('weight')+6.25*n('height')-5*n('age')+(s('sex')==='male'?5:-161); const hb=s('sex')==='male'?13.397*n('weight')+4.799*n('height')-5.677*n('age')+88.362:9.247*n('weight')+3.098*n('height')-4.330*n('age')+447.593; const leanMass=n('weight')*(1-n('bodyFat')/100); const km=370+21.6*leanMass; const bmr=formula==='harris'?hb:formula==='katch'?km:mf; const tdee=bmr*n('activity'); const tdeeKj=tdee*4.184; if(kind==='macros'){const goal=s('goal')||'maintain'; const goalMap: Record<string, {cal:number;pPct:number;cPct:number;fPct:number;label:string}>={'lose-mild':{cal:-250,pPct:.30,cPct:.35,fPct:.35,label:'Mild deficit'},'lose':{cal:-500,pPct:.30,cPct:.35,fPct:.35,label:'0.5 kg/week loss'},'lose-extreme':{cal:-1000,pPct:.35,cPct:.30,fPct:.35,label:'1 kg/week loss'},'maintain':{cal:0,pPct:.25,cPct:.45,fPct:.30,label:'Maintenance'},'gain-mild':{cal:250,pPct:.30,cPct:.45,fPct:.25,label:'Mild surplus'},'gain':{cal:500,pPct:.30,cPct:.50,fPct:.20,label:'0.5 kg/week gain'},'gain-extreme':{cal:1000,pPct:.30,cPct:.50,fPct:.20,label:'1 kg/week gain'}}; const g=goalMap[goal]||goalMap.maintain; const calories=Math.max(1200,tdee+g.cal); const pCal=calories*g.pPct, cCal=calories*g.cPct, fCal=calories*g.fPct; output=card('DAILY CALORIES',`${number(calories,0)} kcal`,g.label)+card('PROTEIN',`${number(pCal/4,0)} g (4 kcal/g)`,`${number(g.pPct*100,0)}% of calories`)+card('CARBS',`${number(cCal/4,0)} g (4 kcal/g)`,`${number(g.cPct*100,0)}% of calories`)+card('FAT',`${number(fCal/9,0)} g (9 kcal/g)`,`${number(g.fPct*100,0)}% of calories`)+card('MAINTENANCE',`${number(tdee,0)} kcal`,'At current activity');}else{output=card('MAINTENANCE CALORIES',`${number(tdee,0)} kcal`,`${number(tdeeKj,0)} kJ`)+card('BMR',`${number(bmr,0)} kcal`,`Formula: ${formula==='harris'?'Harris-Benedict':formula==='katch'?'Katch-McArdle':'Mifflin-St Jeor'}`)+(formula==='katch'?card('LEAN BODY MASS',`${number(leanMass,1)} kg`,`Based on ${n('bodyFat')}% body fat`):'')+card('MILD LOSS',`${number(tdee-250,0)} kcal`,'0.25 kg/week')+card('WEIGHT LOSS',`${number(Math.max(1200,tdee-500),0)} kcal`,'0.5 kg/week')+card('WEIGHT GAIN',`${number(tdee+300,0)} kcal`,'0.25 kg/week')+(formula!=='katch'?card('ALL FORMULAS','Mifflin: '+number(mf,0)+' | Harris: '+number(hb,0)+(formula!=='katch'?' | Katch: '+number(km,0):'')):'');}}
+      if (kind === 'body-fat') { const female=s('sex')==='female', age=n('age'); let bf=0; if(name.includes('Army')) { const waist=n('waist')/2.54, pounds=n('weight')*2.20462; bf=female?1.27*waist-.015*pounds-9.15:1.99*waist-.12*pounds-26.97; const maxBF=female?(age<21?30:age<28?32:age<40?34:36):(age<21?20:age<28?22:age<40?24:26); const pass=bf<=maxBF; const cat=pass?'WITHIN STANDARD':'EXCEEDS STANDARD'; output=card('BODY FAT',`${number(bf,1)}%`,cat)+card('ARMY MAX',`${maxBF}%`,`Age ${age}, ${female?'Female':'Male'}`)+card('STATUS',pass?'PASS':'FAIL',pass?'Meets AR 600-9 standard':'Exceeds standard by '+number(bf-maxBF,1)+'%')+card('FAT MASS',`${number(n('weight')*bf/100,1)} kg`)+card('LEAN MASS',`${number(n('weight')*(1-bf/100),1)} kg`); } else { const h=n('height')/2.54, neck=n('neck')/2.54, waist=n('waist')/2.54, hip=n('hip')/2.54; bf=female?163.205*Math.log10(waist+hip-neck)-97.684*Math.log10(h)-78.387:86.01*Math.log10(waist-neck)-70.041*Math.log10(h)+36.76; const cat=female?(bf<14?'Essential fat':bf<21?'Athletes':bf<25?'Fitness':bf<32?'Average':'Above average'):(bf<6?'Essential fat':bf<14?'Athletes':bf<18?'Fitness':bf<25?'Average':'Above average'); const idealBf=female?(age<21?17:age<26?18:age<31?19:age<36?20:age<41?21:age<46?22:age<51?23:24):(age<21?10:age<26?12:age<31?13:age<36?14:age<41?15:age<46?16:age<51?17:18); const bfToLose=Math.max(0,bf-idealBf); output=card('BODY FAT',`${number(bf,1)}%`,cat)+card('FAT MASS',`${number(n('weight')*bf/100,1)} kg`)+card('LEAN MASS',`${number(n('weight')*(1-bf/100),1)} kg`)+card('IDEAL BODY FAT',`${idealBf}%`,`Jackson & Pollock, Age ${age}`)+card('FAT TO LOSE',`${number(bfToLose,1)} kg`,bfToLose>0?'To reach ideal range':'Already at or below ideal')+card('CATEGORY',cat,female?'Women: Essential <14%, Athletes 14-20%, Fitness 21-24%, Average 25-31%':'Men: Essential <6%, Athletes 6-13%, Fitness 14-17%, Average 18-24%'); } }
+      if (kind === 'ideal-weight') { const inches=n('height')/2.54, extra=Math.max(0,inches-60), female=s('sex')==='female', frame=s('frame')||'medium'; const devine=(female?45.5:50)+2.3*extra, robinson=(female?49:52)+1.9*extra, miller=(female?53.1:56.2)+1.41*extra, hamwi=(female?45.5:48)+(female?2.2:2.7)*extra; const avg=(devine+robinson+miller+hamwi)/4; const frameAdj=frame==='small'?-.1:frame==='large'?.1:0; const adjAvg=avg*(1+frameAdj); const h=n('height')/100; output=card('AVERAGE ESTIMATE',`${number(adjAvg,1)} kg`,'Devine + Robinson + Miller + Hamwi')+card('DEVINE',`${number(devine,1)} kg`,'Most widely used')+card('ROBINSON',`${number(robinson,1)} kg`)+card('MILLER',`${number(miller,1)} kg`)+card('HAMWI',`${number(hamwi,1)} kg`)+card('BMI RANGE',`${number(18.5*h*h,1)}–${number(24.9*h*h,1)} kg`,'BMI 18.5–24.9 healthy range'); }
+      if (kind === 'lean-mass') { const female=s('sex')==='female', w=n('weight'), h=n('height'); const boer=female?.252*w+.473*h-48.3:.407*w+.267*h-19.2; const james=female?1.07*w-148*(w/h)**2:1.1*w-128*(w/h)**2; const hume=female?.29569*w+.41813*h-43.2933:.32810*w+.33929*h-29.5336; const avg=(boer+james+hume)/3; output=card('LEAN BODY MASS',`${number(avg,1)} kg`,'Average of Boer + James + Hume')+card('BOER',`${number(boer,1)} kg`,'Most widely used')+card('JAMES',`${number(james,1)} kg`)+card('HUME',`${number(hume,1)} kg`)+card('ESTIMATED FAT',`${number(w-avg,1)} kg`)+card('LEAN PERCENT',`${number(safeDivide(avg,w)*100,1)}%`); }
       if (kind === 'one-rep-max') { const epley=n('weight')*(1+n('reps')/30), brzycki=36*n('weight')/(37-n('reps')); output=card('ESTIMATED 1RM',number((epley+brzycki)/2,1))+card('Epley',number(epley,1))+card('Brzycki',number(brzycki,1)); }
-      if (kind === 'heart-rate') { const max=208-.7*n('age'), target=n('resting')+n('intensity')/100*(max-n('resting')); output=card('TARGET HEART RATE',`${number(target,0)} bpm`)+card('ESTIMATED MAX',`${number(max,0)} bpm`)+card('HEART RATE RESERVE',`${number(max-n('resting'),0)} bpm`); }
-      if (kind === 'pregnancy' || kind === 'cycle') { const date=new Date(`${s('date')}T12:00:00`), cycle=n('cycle'), ovulation=new Date(date); ovulation.setDate(ovulation.getDate()+cycle-14); const due=new Date(date); due.setDate(due.getDate()+280+(cycle-28)); const next=new Date(date); next.setDate(next.getDate()+cycle); const fmt=(d:Date)=>new Intl.DateTimeFormat(undefined,{dateStyle:'medium'}).format(d); output=card('ESTIMATED OVULATION',fmt(ovulation))+card(kind==='pregnancy'?'ESTIMATED DUE DATE':'NEXT PERIOD',fmt(kind==='pregnancy'?due:next))+card('FERTILE WINDOW',`${fmt(new Date(ovulation.getTime()-5*864e5))} – ${fmt(new Date(ovulation.getTime()+864e5))}`); }
-      if (kind === 'protein') { const grams=n('weight')*n('activity'); output=card('DAILY PROTEIN',`${number(grams,0)} g`)+card('PER MEAL (4)',`${number(grams/4,0)} g`)+card('PER KG',`${n('activity')} g/kg`); }
+      if (kind === 'heart-rate') { const fox=220-n('age'), tanaka=208-.7*n('age'), nes=211-.64*n('age'); const maxAvg=(fox+tanaka+nes)/3; const hrr=maxAvg-n('resting'); const target=n('resting')+n('intensity')/100*hrr; const z1=[Math.round(n('resting')+hrr*.5),Math.round(n('resting')+hrr*.6)]; const z2=[Math.round(n('resting')+hrr*.6),Math.round(n('resting')+hrr*.7)]; const z3=[Math.round(n('resting')+hrr*.7),Math.round(n('resting')+hrr*.8)]; const z4=[Math.round(n('resting')+hrr*.8),Math.round(n('resting')+hrr*.9)]; const z5=[Math.round(n('resting')+hrr*.9),Math.round(maxAvg)]; output=card('TARGET HEART RATE',`${number(target,0)} bpm`,`At ${n('intensity')}% intensity`)+card('FOX (220-age)',`${fox} bpm`,'Classic formula, overestimates for 40+')+card('TANAKA (208-0.7a)',`${tanaka} bpm`,'More accurate for older adults')+card('NES (211-0.64a)',`${nes} bpm`,'Best for athletes')+card('AVERAGE MAX HR',`${number(maxAvg,0)} bpm`,'Used for zone calculation')+card('HEART RATE RESERVE',`${number(hrr,0)} bpm`,'Karvonen method')+card('ZONE 1 Recovery',`${z1[0]}–${z1[1]} bpm`,'50–60% intensity')+card('ZONE 2 Fat Burn',`${z2[0]}–${z2[1]} bpm`,'60–70% intensity')+card('ZONE 3 Aerobic',`${z3[0]}–${z3[1]} bpm`,'70–80% intensity')+card('ZONE 4 Threshold',`${z4[0]}–${z4[1]} bpm`,'80–90% intensity')+card('ZONE 5 VO2 Max',`${z5[0]}–${z5[1]} bpm`,'90–100% intensity'); }
+      if (kind === 'pregnancy') {
+        const method=s('method')||'lmp', inputDate=new Date(s('date')+'T12:00:00'), cycle=n('cycle');
+        let lmpDate, conceptionDate;
+        if(method==='lmp'){ lmpDate=inputDate; conceptionDate=new Date(lmpDate); conceptionDate.setDate(conceptionDate.getDate()+14); }
+        else if(method==='duedate'){ lmpDate=new Date(inputDate); lmpDate.setDate(lmpDate.getDate()-280-(cycle-28)); conceptionDate=new Date(lmpDate); conceptionDate.setDate(conceptionDate.getDate()+14); }
+        else if(method==='conception'){ conceptionDate=inputDate; lmpDate=new Date(conceptionDate); lmpDate.setDate(lmpDate.getDate()-14); }
+        else if(method==='ultrasound'){ const usWeeks=n('usWeeks'),usDays=n('usDays'),totalDays=usWeeks*7+usDays; lmpDate=new Date(inputDate); lmpDate.setDate(lmpDate.getDate()-totalDays); conceptionDate=new Date(lmpDate); conceptionDate.setDate(conceptionDate.getDate()+14); }
+        else{ const embryoAge=n('embryoAge'); lmpDate=new Date(inputDate); lmpDate.setDate(lmpDate.getDate()-embryoAge+14); conceptionDate=new Date(inputDate); conceptionDate.setDate(conceptionDate.getDate()-embryoAge+14); }
+        const due=new Date(lmpDate); due.setDate(due.getDate()+280+(cycle-28));
+        const today=new Date(); today.setHours(12,0,0,0);
+        const daysPregnant=Math.floor((today.getTime()-lmpDate.getTime())/864e5), weeksPregnant=Math.floor(daysPregnant/7), daysRemain=Math.max(0,280-daysPregnant);
+        const trimester=weeksPregnant<=12?'First Trimester (Weeks 1-12)':weeksPregnant<=26?'Second Trimester (Weeks 13-26)':'Third Trimester (Weeks 27-40)';
+        const trimesterShort=weeksPregnant<=12?'1st':weeksPregnant<=26?'2nd':'3rd';
+        const fmt=(d: Date)=>new Intl.DateTimeFormat(undefined,{dateStyle:'medium'}).format(d);
+        const pctComplete=Math.min(100,Math.round(daysPregnant/280*100));
+        const milestones: Record<number, [string, string]>={1:['Poppy seed','Fertilized egg implants in uterine lining'],2:['Sesame seed','Embryo begins to develop'],3:['Lentil','Early cell division underway'],4:['Kidney bean','Heart tube begins to form'],5:['Apple seed','Heart starts beating; neural tube forms'],6:['Sweet pea','Arms and legs begin to bud'],7:['Blueberry','Facial features starting to form'],8:['Raspberry','Fingers and toes forming'],9:['Cherry','External ears developing'],10:['Strawberry','Bones hardening; nails growing'],11:['Lime','Fingerprints forming'],12:['Plum','Organs fully formed'],13:['Lemon','Vocal cords forming'],14:['Peach','Can squint and frown'],15:['Apple','Baby can sense light'],16:['Avocado','Eyes can sense light'],17:['Turnip','Fat stores beginning'],18:['Bell pepper','Hearing developing'],19:['Mango','Sensory development'],20:['Banana','Movement felt; lanugo hair'],21:['Carrot','Eyebrows fully formed'],22:['Papaya','Rapid brain growth'],23:['Grapefruit','Lungs developing surfactant'],24:['Ear of corn','Viability milestone'],25:['Rutabaga','Responding to sounds'],26:['Zucchini','Lungs developing branches'],27:['Cauliflower','Brain activity increasing'],28:['Eggplant','Pupils respond to light'],29:['Butternut squash','Bones fully developed'],30:['Cabbage','Bone marrow production'],31:['Coconut','Five senses functional'],32:['Jicama','Toenails visible'],33:['Durian','Lungs nearly mature'],34:['Honeydew melon','Rapid weight gain'],35:['Pineapple','Kidneys fully developed'],36:['Romaine lettuce','Gaining ~1 oz/day'],37:['Winter melon','Early term'],38:['Leek','Full term'],39:['Mini watermelon','Full term; ready'],40:['Watermelon','Due date']};
+        const [size,dev]=milestones[Math.min(weeksPregnant,40)]||['Unknown','N/A'];
+        let trimesterDetails='';
+        if(weeksPregnant<=12) trimesterDetails='<div class="mt-4 rounded-xl border bg-[var(--soft)] p-4" style="border-color:var(--line)"><h4 class="text-sm font-semibold mb-2">First Trimester Key Events</h4><ul class="text-xs leading-6 text-[var(--muted)] space-y-1"><li><strong>Weeks 1-4:</strong> Implantation, early cell differentiation</li><li><strong>Weeks 5-8:</strong> Heartbeat, limb formation, facial features</li><li><strong>Weeks 9-12:</strong> Organs mature, reflexes begin</li></ul></div>';
+        else if(weeksPregnant<=26) trimesterDetails='<div class="mt-4 rounded-xl border bg-[var(--soft)] p-4" style="border-color:var(--line)"><h4 class="text-sm font-semibold mb-2">Second Trimester Key Events</h4><ul class="text-xs leading-6 text-[var(--muted)] space-y-1"><li><strong>Weeks 13-16:</strong> Movement felt, facial features clear</li><li><strong>Weeks 17-20:</strong> Anatomy scan, hearing develops</li><li><strong>Weeks 21-26:</strong> Viability milestone, lungs developing</li></ul></div>';
+        else trimesterDetails='<div class="mt-4 rounded-xl border bg-[var(--soft)] p-4" style="border-color:var(--line)"><h4 class="text-sm font-semibold mb-2">Third Trimester Key Events</h4><ul class="text-xs leading-6 text-[var(--muted)] space-y-1"><li><strong>Weeks 27-32:</strong> Brain activity increases, practice breathing</li><li><strong>Weeks 33-36:</strong> Rapid weight gain, lungs maturing</li><li><strong>Weeks 37-40:</strong> Full term, ready for delivery</li></ul></div>';
+        let weekTableHTML='';
+        const weekRange=Math.max(1,weeksPregnant-2);
+        const endWeek=Math.min(40,weekRange+7);
+        weekTableHTML='<div class="mt-4"><p class="text-xs font-semibold tracking-[.08em] text-[var(--muted)] mb-3">WEEK-BY-WEEK NEARBY MILESTONES</p><div class="rounded-xl border overflow-hidden" style="border-color:var(--line)"><table class="w-full text-left text-sm"><thead class="bg-[var(--soft)]"><tr><th class="px-3 py-2 text-xs font-semibold text-[var(--muted)]">Week</th><th class="px-3 py-2 text-xs font-semibold text-[var(--muted)]">Size</th><th class="px-3 py-2 text-xs font-semibold text-[var(--muted)]">Development</th></tr></thead><tbody>';
+        for(let w=Math.max(1,weekRange);w<=endWeek;w++){
+          const [sz,dev2]=milestones[w]||['',''];
+          const isCurrent=w===weeksPregnant;
+          weekTableHTML+='<tr class="'+(isCurrent?'bg-[var(--color-primary)]/5 font-semibold':'')+' border-t" style="border-color:var(--line)"><td class="px-3 py-2 text-xs whitespace-nowrap">'+(isCurrent?'> ':'')+w+'</td><td class="px-3 py-2 text-xs">'+sz+'</td><td class="px-3 py-2 text-xs text-[var(--muted)]">'+dev2+'</td></tr>';
+        }
+        weekTableHTML+='</tbody></table></div></div>';
+        output=card('DUE DATE',fmt(due),'40 weeks from LMP',true)
+          +card('GESTATIONAL AGE',weeksPregnant+' weeks, '+(daysPregnant%7)+' days',daysPregnant+' days total')
+          +card('TRIMESTER',trimesterShort+' Trimester',trimester)
+          +card('DAYS REMAINING',daysRemain+' days','~'+Math.floor(daysRemain/7)+' weeks, '+(daysRemain%7)+' days')
+          +card('PROGRESS',pctComplete+'% complete','Of 40-week term')
+          +card('BABY SIZE',size,'Week '+weeksPregnant)
+          +card('DEVELOPMENT',dev)
+          +card('CONCEPTION DATE',fmt(conceptionDate),'Estimated')
+          +card('END OF 1ST TRIMESTER',fmt(new Date(lmpDate.getTime()+84*864e5)))
+          +card('END OF 2ND TRIMESTER',fmt(new Date(lmpDate.getTime()+182*864e5)))
+          +card('INTERCOURSE RANGE',fmt(new Date(conceptionDate.getTime()-5*864e5))+' - '+fmt(new Date(conceptionDate.getTime()+1*864e5)),'Possible conception window (sperm viable 3-5 days)')
+          +trimesterDetails+weekTableHTML;}
+      if (kind === 'protein') { const grams=n('weight')*n('activity'); const rda=n('weight')*.8; output=card('DAILY PROTEIN',`${number(grams,0)} g`)+card('PER MEAL (4)',`${number(grams/4,0)} g`)+card('PER KG',`${n('activity')} g/kg`)+card('RDA MINIMUM',`${number(rda,0)} g`,'0.8 g/kg baseline'); }
       if (kind === 'calories-burned') { const kcal=n('minutes')*n('met')*3.5*n('weight')/200; output=card('CALORIES BURNED',`${number(kcal,0)} kcal`)+card('PER HOUR',`${number(safeDivide(kcal,n('minutes'))*60,0)} kcal`)+card('MET VALUE',number(n('met'),1)); }
+      if (kind === 'cycle') {
+        const date=new Date(s('date')+'T12:00:00'), cycleLen=n('cycle'), periodLen=n('period');
+        const ovulation=new Date(date);
+        ovulation.setDate(ovulation.getDate()+cycleLen-14);
+        const fertileStart=new Date(ovulation);
+        fertileStart.setDate(fertileStart.getDate()-5);
+        const fertileEnd=new Date(ovulation);
+        fertileEnd.setDate(fertileEnd.getDate()+1);
+        const nextPeriod=new Date(date);
+        nextPeriod.setDate(nextPeriod.getDate()+cycleLen);
+        const periodEnd=new Date(date);
+        periodEnd.setDate(periodEnd.getDate()+periodLen);
+        const fmt=(d: Date)=>new Intl.DateTimeFormat(undefined,{dateStyle:'medium'}).format(d);
+        const fmtShort=(d: Date)=>new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(d);
+        const now=Date.now();
+        const daysTilOvulation=Math.max(0,Math.ceil((ovulation.getTime()-now)/(864e5)));
+        const daysTilPeriod=Math.max(0,Math.ceil((nextPeriod.getTime()-now)/(864e5)));
+        const daysSincePeriod=Math.max(0,Math.floor((now-date.getTime())/(864e5)));
+        const cycleDay=Math.min(cycleLen,(daysSincePeriod%cycleLen)+1);
+        let currentPhase='';
+        if(cycleDay<=periodLen) currentPhase='Menstrual Phase';
+        else if(cycleDay<=7) currentPhase='Follicular Phase';
+        else if(cycleDay<=12) currentPhase='Pre-ovulatory';
+        else if(cycleDay<=16) currentPhase='Ovulatory Phase';
+        else currentPhase='Luteal Phase';
+        const phaseDesc=cycleDay<=periodLen?'Uterine lining shedding; lowest fertility':cycleDay<=7?'Endometrium rebuilding; low fertility':cycleDay<=12?'Cervical mucus increasing; fertility rising':cycleDay<=16?'Peak fertility; egg released':'Progesterone dominant; fertility declining';
+        let calendarHTML='<div class="mt-4"><p class="text-xs font-semibold tracking-[.08em] text-[var(--muted)] mb-3">3-MONTH PROJECTION</p><div class="rounded-xl border overflow-hidden" style="border-color:var(--line)"><table class="w-full text-left text-sm"><thead class="bg-[var(--soft)]"><tr><th class="px-3 py-2 text-xs font-semibold text-[var(--muted)]">Month</th><th class="px-3 py-2 text-xs font-semibold text-[var(--muted)]">Period Start</th><th class="px-3 py-2 text-xs font-semibold text-[var(--muted)]">Fertile Window</th><th class="px-3 py-2 text-xs font-semibold text-[var(--muted)]">Ovulation</th></tr></thead><tbody>';
+        for(let i=0;i<3;i++){
+          const mPeriod=new Date(date);
+          mPeriod.setDate(mPeriod.getDate()+cycleLen*i);
+          const mOvulation=new Date(mPeriod);
+          mOvulation.setDate(mOvulation.getDate()+cycleLen-14);
+          const mFertileStart=new Date(mOvulation);
+          mFertileStart.setDate(mFertileStart.getDate()-5);
+          const mFertileEnd=new Date(mOvulation);
+          mFertileEnd.setDate(mFertileEnd.getDate()+1);
+          const isCurrent=i===0;
+          calendarHTML+='<tr class="'+(isCurrent?'bg-[var(--color-primary)]/5 font-semibold':'')+' border-t" style="border-color:var(--line)"><td class="px-3 py-2 text-xs">'+(isCurrent?'> ':'')+(i===0?'Current':i===1?'Next':'+2 Months')+'</td><td class="px-3 py-2 text-xs">'+fmtShort(mPeriod)+'</td><td class="px-3 py-2 text-xs text-amber-600">'+fmtShort(mFertileStart)+'-'+fmtShort(mFertileEnd)+'</td><td class="px-3 py-2 text-xs text-emerald-600">'+fmtShort(mOvulation)+'</td></tr>';
+        }
+        calendarHTML+='</tbody></table></div></div>';
+        output=card('OVULATION DATE',fmt(ovulation),'In '+daysTilOvulation+' days',true)
+          +card('FERTILE WINDOW',fmtShort(fertileStart)+' - '+fmtShort(fertileEnd),'6 days; sperm survive up to 5 days')
+          +card('BEST DAYS TO CONCEIVE',fmtShort(new Date(ovulation.getTime()-2*864e5))+' - '+fmtShort(ovulation),'3 days before and day of ovulation')
+          +card('NEXT PERIOD',fmt(nextPeriod),'In '+daysTilPeriod+' days')
+          +card('CURRENT PHASE',currentPhase,phaseDesc)
+          +card('CYCLE DAY',cycleDay+' of '+cycleLen,'Day 1 = first day of last period')
+          +card('CYCLE LENGTH',cycleLen+' days','28-30 days is typical')
+          +card('PERIOD LENGTH',periodLen+' days','2-7 days is normal')
+          +card('LUTEAL PHASE','14 days','Fixed in most women; varies 12-16 days')
+          +calendarHTML;}
       if (kind === 'bsa') { const mosteller=Math.sqrt(n('weight')*n('height')/3600), dubois=.007184*n('weight')**.425*n('height')**.725; output=card('MOSTELLER BSA',`${number(mosteller,2)} m²`)+card('DU BOIS BSA',`${number(dubois,2)} m²`)+card('AVERAGE',`${number((mosteller+dubois)/2,2)} m²`); }
-      if (kind === 'bac') { const alcohol=n('drinks')*14, ratio=s('sex')==='female'?.55:.68, bac=Math.max(0,alcohol/(n('weight')*1000*ratio)*100-.015*n('hours')); output=card('ESTIMATED BAC',`${number(bac,3)}%`)+card('STANDARD DRINKS',number(n('drinks'),0))+card('SAFETY','Do not drive','BAC estimates are not measurements'); }
-      if (kind === 'gfr') { const female=s('sex')==='female', k=female ? .7 : .9, a=female ? -.241 : -.302, scr=n('creatinine'), egfr=142*Math.min(scr/k,1)**a*Math.max(scr/k,1)**-1.2*.9938**n('age')*(female?1.012:1); output=card('ESTIMATED GFR',`${number(egfr,0)} mL/min/1.73m²`)+card('EQUATION','2021 CKD-EPI','Race-free creatinine equation')+card('IMPORTANT','Discuss clinically','One result cannot diagnose CKD'); }
-      if (kind === 'pregnancy-weight') { const h=n('height')/100, bmi=n('preweight')/h**2; const range=bmi<18.5?[12.5,18]:bmi<25?[11.5,16]:bmi<30?[7,11.5]:[5,9]; const progress=Math.max(0,Math.min(1,(n('week')-13)/27)), low=range[0]*progress, high=2+range[1]*progress; output=card('PRE-PREGNANCY BMI',number(bmi,1))+card('RECOMMENDED TOTAL',`${range[0]}–${range[1]} kg`)+card('GAIN SO FAR',`${number(n('current')-n('preweight'),1)} kg`, `Approx. range by week ${n('week')}: ${number(low,1)}–${number(high,1)} kg`); }
-      if (kind === 'body-type') { const bust=n('bust'), waist=n('waist'), hip=n('hip'), ratio=waist/hip; const shape=Math.abs(bust-hip)<=hip*.05?(waist<=hip*.75?'Hourglass':'Rectangle'):bust>hip*1.05?'Inverted triangle':'Triangle'; output=card('BODY SHAPE',shape)+card('WAIST-TO-HIP RATIO',number(ratio,2))+card('MEASUREMENT DIFFERENCE',`${number(Math.abs(bust-hip),1)} cm`); }
+      if (kind === 'bac') { const alcohol=n('drinks')*14, ratio=s('sex')==='female'?.55:.68, bac=Math.max(0,alcohol/(n('weight')*1000*ratio)*100-.015*n('hours')); const usLimit=0.08, euLimit=0.05; const status=bac<euLimit?'Legal to drive (EU)':bac<usLimit?'Illegal in EU, legal in some US states':bac<0.2?'Driving prohibited':bac<0.3?'Severe impairment':'Life-threatening'; output=card('ESTIMATED BAC',`${number(bac,3)}%`,status)+card('STANDARD DRINKS',number(n('drinks'),0))+card('US LEGAL LIMIT','0.08%','0.08 BAC for drivers 21+')+card('EU LEGAL LIMIT','0.05%','Most European countries 0.05%')+card('SAFETY','Do not drive','BAC estimates are not measurements'); }
+      if (kind === 'gfr') { const female=s('sex')==='female', k=female?.7:.9, a=female?-.241:-.302, scr=n('creatinine'), egfr=142*Math.min(scr/k,1)**a*Math.max(scr/k,1)**-1.2*.9938**n('age')*(female?1.012:1); const stage=egfr>=90?'G1 Normal':egfr>=60?'G2 Mild decrease':egfr>=45?'G3a Mild-moderate':egfr>=30?'G3b Moderate-severe':egfr>=15?'G4 Severe decrease':'G5 Kidney failure'; output=card('ESTIMATED GFR',`${number(egfr,0)} mL/min/1.73m²`,stage)+card('CKD STAGE',stage)+card('EQUATION','2021 CKD-EPI','Race-free creatinine equation')+card('IMPORTANT','Discuss clinically','One result cannot diagnose CKD'); }
+      if (kind === 'pregnancy-weight') {
+        const h=n('height')/100, bmi=n('preweight')/h**2, twins=s('twins')==='twins', week=n('week'), currentW=n('current'), preW=n('preweight');
+        const bmiCat=bmi<18.5?'Underweight':bmi<25?'Normal weight':bmi<30?'Overweight':'Obese';
+        const iomData={underweight:{singleton:[12.5,18],twins:[22.5,31.5]},normal:{singleton:[11.5,16],twins:[16.8,24.5]},overweight:{singleton:[7,11.5],twins:[14.1,22.7]},obese:{singleton:[5,9],twins:[11.3,19.1]}};
+        const catKey=bmi<18.5?'underweight':bmi<25?'normal':bmi<30?'overweight':'obese';
+        const range=iomData[catKey][twins?'twins':'singleton'];
+        const minGain=range[0], maxGain=range[1], avgGain=(minGain+maxGain)/2;
+        const gainSoFar=currentW-preW;
+        const weeksRemaining23=Math.max(0,40-week);
+        const totalMinLbs=minGain*2.20462, totalMaxLbs=maxGain*2.20462, gainLbs=gainSoFar*2.20462;
+        const isUnderweight=gainSoFar<minGain*(Math.min(week,40)/40);
+        const isOverweight=gainSoFar>maxGain*(Math.min(week,40)/40);
+        const status=isUnderweight?'Below recommended range':isOverweight?'Above recommended range':'Within recommended range';
+        const statusColor=isUnderweight?'text-amber-600':isOverweight?'text-red-600':'text-emerald-600';
+        const weightDistribution=[
+          {item:'Enlarged breasts',range:'0.5-1.4 kg (1-3 lbs)'},
+          {item:'Enlarged uterus',range:'~0.9 kg (~2 lbs)'},
+          {item:'Placenta',range:'~0.7 kg (~1.5 lbs)'},
+          {item:'Amniotic fluid',range:'~0.9 kg (~2 lbs)'},
+          {item:'Increased blood volume',range:'1.4-1.8 kg (3-4 lbs)'},
+          {item:'Increased fluid volume',range:'0.9-1.4 kg (2-3 lbs)'},
+          {item:'Fat stores',range:'2.7-3.6 kg (6-8 lbs)'},
+          {item:'Baby (at birth)',range:'~3.4 kg (~7.5 lbs)'},
+        ];
+        let weekScheduleHTML='<div class="mt-4"><p class="text-xs font-semibold tracking-[.08em] text-[var(--muted)] mb-3">IOM WEIGHT GAIN GUIDELINES BY BMI</p><div class="rounded-xl border overflow-hidden" style="border-color:var(--line)"><table class="w-full text-left text-sm"><thead class="bg-[var(--soft)]"><tr><th class="px-3 py-2 text-xs font-semibold text-[var(--muted)]">BMI Category</th><th class="px-3 py-2 text-xs font-semibold text-[var(--muted)]">BMI Range</th><th class="px-3 py-2 text-xs font-semibold text-[var(--muted)]">Singleton (kg/lbs)</th><th class="px-3 py-2 text-xs font-semibold text-[var(--muted)]">Twins (kg/lbs)</th></tr></thead><tbody>';
+        const bmiRows=[
+          {cat:'Underweight',range:'< 18.5',s:[12.5,18],t:[22.5,31.5]},
+          {cat:'Normal',range:'18.5-24.9',s:[11.5,16],t:[16.8,24.5]},
+          {cat:'Overweight',range:'25.0-29.9',s:[7,11.5],t:[14.1,22.7]},
+          {cat:'Obese',range:'>= 30.0',s:[5,9],t:[11.3,19.1]},
+        ];
+        for(const row of bmiRows){
+          const isCurrent=row.cat.toLowerCase()===bmiCat.toLowerCase().split(' ')[0];
+          weekScheduleHTML+='<tr class="'+(isCurrent?'bg-[var(--color-primary)]/5 font-semibold':'')+' border-t" style="border-color:var(--line)"><td class="px-3 py-2 text-xs">'+(isCurrent?'> ':'')+row.cat+'</td><td class="px-3 py-2 text-xs">'+row.range+'</td><td class="px-3 py-2 text-xs">'+row.s[0]+'-'+row.s[1]+' kg ('+Math.round(row.s[0]*2.20462)+'-'+Math.round(row.s[1]*2.20462)+' lbs)</td><td class="px-3 py-2 text-xs">'+row.t[0]+'-'+row.t[1]+' kg ('+Math.round(row.t[0]*2.20462)+'-'+Math.round(row.t[1]*2.20462)+' lbs)</td></tr>';
+        }
+        weekScheduleHTML+='</tbody></table></div></div>';
+        let distHTML='<div class="mt-4"><p class="text-xs font-semibold tracking-[.08em] text-[var(--muted)] mb-3">PREGNANCY WEIGHT GAIN DISTRIBUTION</p><div class="rounded-xl border overflow-hidden" style="border-color:var(--line)"><table class="w-full text-left text-sm"><thead class="bg-[var(--soft)]"><tr><th class="px-3 py-2 text-xs font-semibold text-[var(--muted)]">Component</th><th class="px-3 py-2 text-xs font-semibold text-[var(--muted)]">Weight Gain</th></tr></thead><tbody>';
+        for(const d of weightDistribution) distHTML+='<tr class="border-t" style="border-color:var(--line)"><td class="px-3 py-2 text-xs">'+d.item+'</td><td class="px-3 py-2 text-xs text-[var(--muted)]">'+d.range+'</td></tr>';
+        distHTML+='</tbody></table></div></div>';
+        output=card('PRE-PREGNANCY BMI',number(bmi,1)+' ('+bmiCat+')','BMI = weight / height²',true)
+          +card('RECOMMENDED TOTAL GAIN',minGain+'-'+maxGain+' kg ('+Math.round(totalMinLbs)+'-'+Math.round(totalMaxLbs)+' lbs)',twins?'Twins guideline':'Singleton guideline, IOM 2009')
+          +card('WEIGHT GAIN SO FAR',number(gainSoFar,1)+' kg ('+number(gainLbs,1)+' lbs)','Since pre-pregnancy')
+          +card('EXPECTED BY WEEK '+week,number(minGain*(Math.min(week,40)/40),1)+'-'+number(maxGain*(Math.min(week,40)/40),1)+' kg','Based on linear IOM trajectory')
+          +card('STATUS','<span class="'+statusColor+'">'+status+'</span>','Compared to IOM guidelines for '+bmiCat+' BMI')
+          +card('WEEKLY TARGET (2nd-3rd)',number(avgGain/27,1)+' kg/week ('+number(avgGain/27*2.20462,1)+' lbs/week)','~300 extra kcal/day')
+          +card('FIRST TRIMESTER GAIN','1-4 kg (2-8 lbs)','Total recommended for weeks 1-13')
+          +card('WEEKS REMAINING',weeksRemaining23+' weeks','Until due date (week 40)')
+          +weekScheduleHTML+distHTML;}
+      if (kind === 'body-type') { const bust=n('bust'), waist=n('waist'), hip=n('hip'), ratio=waist/hip; const shape=Math.abs(bust-hip)<=hip*.05?(waist<=hip*.75?'Hourglass':'Rectangle'):bust>hip*1.05?'Inverted triangle':'Triangle'; const risk=ratio>(s('sex')==='male'?.9:.85)?'Higher cardiometabolic risk':'Lower cardiometabolic risk'; const whrRisk=ratio>(s('sex')==='male'?.9:.85)?'Above healthy threshold':'Within healthy range'; output=card('BODY SHAPE',shape)+card('WAIST-TO-HIP RATIO',number(ratio,2),whrRisk)+card('HEALTH RISK',risk,`WHO threshold: ${s('sex')==='male'?'>0.90':'>0.85'}`)+card('MEASUREMENT DIFFERENCE',`${number(Math.abs(bust-hip),1)} cm`,'Bust vs hip difference'); }
       if (kind === 'roas') { const roas=safeDivide(n('revenue'),n('spend')), profit=n('revenue')-n('spend'); output=card('ROAS',`${number(roas,2)}x`,`${number(roas*100,0)}% return on ad spend`)+card('REVENUE',money(n('revenue')))+card('REVENUE MINUS AD SPEND',money(profit)); }
       if (kind === 'break-even-roas') { const margin=n('margin')/100, roas=safeDivide(1,margin), grossProfit=n('aov')*margin; output=card('BREAK-EVEN ROAS',`${number(roas,2)}x`)+card('BREAK-EVEN REVENUE / $1',money(roas))+card('GROSS PROFIT / ORDER',money(grossProfit),'Before advertising cost'); }
       if (kind === 'ad-spend') { const spend=safeDivide(n('revenue'),n('target')); output=card('MAX AD SPEND',money(spend))+card('DAILY BUDGET',money(safeDivide(spend,n('days'))))+card('TARGET ROAS',`${number(n('target'),2)}x`); }
@@ -123,7 +972,45 @@ const marketing = tool.category === 'Marketing';
       if (kind === 'profit-margin') { const gross=n('revenue')-n('cogs'), net=gross-n('expenses'); output=card('NET PROFIT MARGIN',`${number(safeDivide(net,n('revenue'))*100,2)}%`)+card('GROSS MARGIN',`${number(safeDivide(gross,n('revenue'))*100,2)}%`)+card('NET PROFIT',money(net)); }
       const result=root.querySelector<HTMLElement>('[data-general-result]')!, metrics=root.querySelector<HTMLElement>('[data-general-metrics]')!, error=root.querySelector<HTMLElement>('[data-general-error]')!;
       if (hasInvalid(output)) { error.textContent='Enter valid values in every field.'; error.classList.remove('hidden'); result.classList.add('hidden'); return; }
-      error.classList.add('hidden'); metrics.innerHTML=output; result.classList.remove('hidden'); result.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth', block:'nearest' });
+      error.classList.add('hidden'); metrics.innerHTML=output; result.classList.remove('hidden');
+      const existingCharts = root.querySelectorAll('.amortization-wrap, .donut-chart-wrap');
+      existingCharts.forEach(el => el.remove());
+      if (amortData && amortData.length > 0) {
+        const maxShow = Math.min(amortData.length, 360);
+        const tableWrap = document.createElement('div');
+        tableWrap.className = 'amortization-wrap';
+        let tableHTML = `<details class="amortization-details"><summary class="amortization-toggle"><span class="amortization-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 4-6"/></svg></span><span>Amortization Schedule</span><span class="amortization-count">${amortData.length} payments</span><span class="amortization-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span></summary><div class="amortization-table-wrap"><table class="amortization-table"><thead><tr><th>#</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Total Interest</th><th>Balance</th></tr></thead><tbody>`;
+        for (let i = 0; i < maxShow; i++) {
+          const row = amortData[i];
+          const f = (v: number) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          tableHTML += `<tr><td>${row.month}</td><td>${f(row.payment)}</td><td>${f(row.principal)}</td><td>${f(row.interest)}</td><td>${f(row.totalInterest)}</td><td>${f(Math.max(0, row.balance))}</td></tr>`;
+        }
+        tableHTML += '</tbody></table></div></details>';
+        tableWrap.innerHTML = tableHTML;
+        result.appendChild(tableWrap);
+      }
+      if (donutData && donutData.length > 0) {
+        const total = donutData.reduce((s: number, seg: any) => s + seg.value, 0);
+        if (total > 0) {
+          let cumulative = 0;
+          const gradParts: string[] = [];
+          for (const seg of donutData) {
+            const pct = seg.value / total * 100;
+            gradParts.push(`${seg.color} ${cumulative}% ${cumulative + pct}%`);
+            cumulative += pct;
+          }
+          const chartWrap = document.createElement('div');
+          chartWrap.className = 'donut-chart-wrap';
+          let legendHTML = '';
+          for (const seg of donutData) {
+            const pct = (seg.value / total * 100).toFixed(1);
+            legendHTML += `<div class="donut-legend-item"><span class="donut-swatch" style="background:${seg.color}"></span><span class="donut-legend-label">${seg.label}</span><span class="donut-legend-value">$${seg.value.toLocaleString('en-US', { maximumFractionDigits: 0 })}</span><span class="donut-legend-pct">${pct}%</span></div>`;
+          }
+          chartWrap.innerHTML = `<p class="donut-title">Payment Breakdown</p><div class="donut-layout"><div class="donut-container"><div class="donut-ring" style="background:conic-gradient(${gradParts.join(',')})"><div class="donut-hole"><span class="donut-total-label">Total</span><span class="donut-total-value">$${total.toLocaleString('en-US', { maximumFractionDigits: 0 })}</span></div></div></div><div class="donut-legend">${legendHTML}</div></div>`;
+          result.appendChild(chartWrap);
+        }
+      }
+      result.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth', block:'nearest' });
     });
     root.querySelectorAll('input[type="number"]').forEach((input) => {
       input.addEventListener('input', () => {

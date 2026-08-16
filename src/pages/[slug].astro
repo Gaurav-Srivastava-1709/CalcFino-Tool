@@ -11,11 +11,14 @@ const related = getRelatedTools(tool);
 const isTraining = ['training', 'effort'].includes(tool.kind);
 const isSpecial = ['swim', 'treadmill', 'runwalk', 'grade'].includes(tool.kind);
 const faqs = getRunningFaqs(tool.slug);
+const pageUrl = new URL(`/${tool.slug}/`, Astro.site).href;
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((faq) => ({ '@type': 'Question', name: faq.question, acceptedAnswer: { '@type': 'Answer', text: faq.answer } })) };
 const softwareSchema = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   'name': tool.name,
+  'url': pageUrl,
+  'description': tool.description,
   'operatingSystem': 'All',
   'applicationCategory': 'FitnessApplication',
   'browserRequirements': 'Requires HTML5. Requires JavaScript.',
@@ -24,6 +27,14 @@ const softwareSchema = {
     'price': '0',
     'priceCurrency': 'USD'
   }
+};
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  'itemListElement': [
+    { '@type': 'ListItem', 'position': 1, 'name': 'Calculators', 'item': new URL('/', Astro.site).href },
+    { '@type': 'ListItem', 'position': 2, 'name': tool.name, 'item': pageUrl }
+  ]
 };
 ---
 <Layout title={`${tool.name} - Free & Accurate`} description={tool.description}>
@@ -76,6 +87,7 @@ const softwareSchema = {
   </article>
   <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
   <script is:inline type="application/ld+json" set:html={JSON.stringify(softwareSchema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 
   <section class="shell border-t py-16" style="border-color:var(--line)"><p class="eyebrow">Continue planning</p><h2 class="display mt-3 text-3xl">Related calculators</h2><div class="mt-7 grid gap-4 md:grid-cols-3">{related.map((item) => <ToolCard tool={item} index={tools.indexOf(item)} />)}</div></section>
 </Layout>

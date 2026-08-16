@@ -1,0 +1,64 @@
+---
+interface Segment { label: string; value: number; color: string; }
+const { segments = [], title = 'Payment Breakdown' } = Astro.props as { segments?: Segment[]; title?: string };
+const total = segments.reduce((s, seg) => s + seg.value, 0);
+const pct = (v: number) => total > 0 ? (v / total * 100) : 0;
+let cumulative = 0;
+const gradientParts: string[] = [];
+for (const seg of segments) {
+  const start = cumulative;
+  const end = cumulative + pct(seg.value);
+  gradientParts.push(`${seg.color} ${start}% ${end}%`);
+  cumulative = end;
+}
+const gradient = gradientParts.join(', ');
+---
+{segments.length > 0 && total > 0 && (
+<div class="donut-chart-wrap">
+  <p class="donut-title">{title}</p>
+  <div class="donut-layout">
+    <div class="donut-container">
+      <div class="donut-ring" style={`background: conic-gradient(${gradient});`}>
+        <div class="donut-hole">
+          <span class="donut-total-label">Total</span>
+          <span class="donut-total-value">${total.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
+        </div>
+      </div>
+    </div>
+    <div class="donut-legend">
+      {segments.map((seg) => (
+        <div class="donut-legend-item">
+          <span class="donut-swatch" style={`background: ${seg.color};`}></span>
+          <span class="donut-legend-label">{seg.label}</span>
+          <span class="donut-legend-value">${seg.value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
+          <span class="donut-legend-pct">{pct(seg.value).toFixed(1)}%</span>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+)}
+
+<style>
+  .donut-chart-wrap { margin-top: 1.25rem; }
+  .donut-title { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
+  .donut-layout { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+  .donut-container { flex-shrink: 0; }
+  .donut-ring {
+    width: 140px; height: 140px; border-radius: 50%; position: relative;
+    display: grid; place-items: center;
+  }
+  .donut-hole {
+    width: 90px; height: 90px; border-radius: 50%; background: var(--panel);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  }
+  .donut-total-label { font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+  .donut-total-value { font-size: 0.8125rem; font-weight: 700; color: var(--heading); margin-top: 0.125rem; }
+  .donut-legend { display: flex; flex-direction: column; gap: 0.5rem; min-width: 0; }
+  .donut-legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem; }
+  .donut-swatch { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .donut-legend-label { color: var(--body); white-space: nowrap; }
+  .donut-legend-value { margin-left: auto; font-weight: 600; color: var(--heading); font-variant-numeric: tabular-nums; }
+  .donut-legend-pct { font-size: 0.75rem; color: var(--muted); min-width: 3rem; text-align: right; }
+</style>
