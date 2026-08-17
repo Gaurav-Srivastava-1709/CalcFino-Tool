@@ -5,8 +5,8 @@ const path = Astro.url.pathname;
 const featured = tools.filter((tool) => ['pace-calculator', '5k-pace-calculator', 'marathon-pace-calculator', 'training-pace-calculator', 'treadmill-pace-calculator', 'finish-time-calculator'].includes(tool.slug));
 const isCalculator = tools.some((tool) => path === `/${tool.slug}/` || path === `/${tool.slug}`) || path.startsWith('/financial/') || path.startsWith('/health/') || path.startsWith('/marketing/') || path.endsWith('-calculators/');
 const searchItems = [
-  ...tools.map((tool) => ({ name: tool.name, url: `/${tool.slug}` })),
-  ...generalTools.map((tool) => ({ name: tool.name, url: `/${categorySlug(tool)}/${tool.slug}` })),
+  ...tools.map((tool) => ({ name: tool.name, url: `/${tool.slug}/` })),
+  ...generalTools.map((tool) => ({ name: tool.name, url: `/${categorySlug(tool)}/${tool.slug}/` })),
 ];
 ---
 <header class="sticky top-0 z-30 border-b bg-[color:var(--panel)]/95 backdrop-blur-md" style="border-color:var(--line)">
@@ -31,14 +31,14 @@ const searchItems = [
           <p class="px-4 pb-1 pt-3 text-xs font-semibold uppercase tracking-[.06em] text-[var(--muted)]">Popular running tools</p>
           <div class="grid grid-cols-2 gap-1">
             {featured.map((tool) => (
-              <a href={`/${tool.slug}`} class="group/item rounded-lg p-3 transition-colors hover:bg-[var(--soft)]">
+               <a href={`/${tool.slug}/`} class="group/item rounded-lg p-3 transition-colors hover:bg-[var(--soft)]">
                 <span class="block text-sm font-semibold group-hover/item:text-[var(--color-primary)]">{tool.shortName}</span>
                 <span class="mt-1 block truncate text-xs text-[var(--muted)]">{tool.category}</span>
               </a>
             ))}
           </div>
-          <a href="/#tools" class="mt-1 flex items-center justify-between rounded-lg border-t px-3 py-3 text-sm font-semibold text-[var(--color-primary)]" style="border-color:var(--line)">
-            View all 19 calculators <span aria-hidden="true">-&gt;</span>
+          <a href="/running-calculators/" class="mt-1 flex items-center justify-between rounded-lg border-t px-3 py-3 text-sm font-semibold text-[var(--color-primary)]" style="border-color:var(--line)">
+            View all 19 running calculators <span aria-hidden="true">-&gt;</span>
           </a>
         </div>
       </details>
@@ -83,9 +83,9 @@ const searchItems = [
       <div class="mb-3"><label class="sr-only" for="mobile-search">Search calculators</label><input id="mobile-search" class="control" type="search" placeholder="Search all calculators..." autocomplete="off" /></div>
       <div class="mb-3 grid grid-cols-2 gap-2"><a href="/financial-calculators" class="rounded-lg bg-[var(--soft)] p-3 text-sm font-semibold">Financial <span class="block pt-1 text-xs font-normal text-[var(--muted)]">71 tools</span></a><a href="/health-calculators" class="rounded-lg bg-[var(--soft)] p-3 text-sm font-semibold">Health <span class="block pt-1 text-xs font-normal text-[var(--muted)]">27 tools</span></a><a href="/marketing-calculators" class="col-span-2 rounded-lg bg-[var(--soft)] p-3 text-sm font-semibold">Marketing & revenue <span class="block pt-1 text-xs font-normal text-[var(--muted)]">10 tools</span></a></div>
       <div class="grid grid-cols-2 gap-1">
-        {featured.slice(0, 4).map((tool) => <a href={`/${tool.slug}`} class="rounded-lg px-2 py-2.5 text-sm font-medium hover:bg-[var(--soft)]">{tool.shortName}</a>)}
+        {featured.slice(0, 4).map((tool) => <a href={`/${tool.slug}/`} class="rounded-lg px-2 py-2.5 text-sm font-medium hover:bg-[var(--soft)]">{tool.shortName}</a>)}
       </div>
-      <a href="/#tools" class="mt-2 block rounded-lg bg-[var(--soft)] px-3 py-2.5 text-sm font-semibold text-[var(--color-primary)]">View all calculators</a>
+      <a href="/running-calculators/" class="mt-2 block rounded-lg bg-[var(--soft)] px-3 py-2.5 text-sm font-semibold text-[var(--color-primary)]">View all running calculators</a>
       <div class="mt-3 flex gap-2 border-t pt-3" style="border-color:var(--line)">
         <a href="/about" class="flex-1 rounded-lg px-3 py-2 text-center text-sm font-medium hover:bg-[var(--soft)]">About</a>
         <a href="/contact" class="flex-1 rounded-lg px-3 py-2 text-center text-sm font-medium hover:bg-[var(--soft)]">Contact</a>

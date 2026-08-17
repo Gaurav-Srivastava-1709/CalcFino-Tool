@@ -10,6 +10,7 @@ const staticPaths = [
   '/financial-calculators/',
   '/health-calculators/',
   '/marketing-calculators/',
+  '/running-calculators/',
   '/privacy-policy/',
   '/terms/',
 ];

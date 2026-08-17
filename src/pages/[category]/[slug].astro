@@ -12,7 +12,29 @@ function renderFormula(text: string): string {
     .replace(/ x /g, ' × ');
 }
 const categoryPath = categoryDirectory(tool);
-const related = generalTools.filter((item) => item.category === tool.category && item.group === tool.group && item.slug !== tool.slug).slice(0, 3);
+const relatedJourneys: Record<string, string[]> = {
+  'mortgage-calculator': ['house-affordability-calculator', 'amortization-calculator', 'mortgage-payoff-calculator'],
+  'house-affordability-calculator': ['mortgage-calculator', 'amortization-calculator', 'mortgage-payoff-calculator'],
+  'amortization-calculator': ['mortgage-calculator', 'mortgage-payoff-calculator', 'house-affordability-calculator'],
+  'mortgage-payoff-calculator': ['mortgage-calculator', 'amortization-calculator', 'house-affordability-calculator'],
+  'roas-calculator': ['break-even-roas-calculator', 'ad-spend-calculator', 'profit-margin-calculator'],
+  'break-even-roas-calculator': ['roas-calculator', 'ad-spend-calculator', 'profit-margin-calculator'],
+  'ad-spend-calculator': ['roas-calculator', 'break-even-roas-calculator', 'profit-margin-calculator'],
+  'profit-margin-calculator': ['roas-calculator', 'break-even-roas-calculator', 'ad-spend-calculator'],
+  'cac-calculator': ['ltv-calculator', 'conversion-rate-calculator', 'roas-calculator'],
+  'ltv-calculator': ['cac-calculator', 'profit-margin-calculator', 'conversion-rate-calculator'],
+  'tdee-calculator': ['protein-calculator', 'macro-calculator', 'calorie-calculator'],
+  'protein-calculator': ['tdee-calculator', 'macro-calculator', 'calorie-calculator'],
+  'macro-calculator': ['tdee-calculator', 'protein-calculator', 'calorie-calculator'],
+  'due-date-calculator': ['pregnancy-calculator', 'pregnancy-conception-calculator', 'conception-calculator'],
+  'pregnancy-calculator': ['due-date-calculator', 'pregnancy-conception-calculator', 'conception-calculator'],
+  'pregnancy-conception-calculator': ['due-date-calculator', 'pregnancy-calculator', 'conception-calculator'],
+  'conception-calculator': ['due-date-calculator', 'pregnancy-calculator', 'pregnancy-conception-calculator'],
+};
+const journey = relatedJourneys[tool.slug];
+const related = journey
+  ? journey.map((slug) => generalTools.find((item) => item.slug === slug)).filter((item): item is GeneralTool => Boolean(item)).slice(0, 3)
+  : generalTools.filter((item) => item.category === tool.category && item.group === tool.group && item.slug !== tool.slug).slice(0, 3);
 const medical = tool.category === 'Health';
 const marketing = tool.category === 'Marketing';
 const detail = getCalculatorDetail(tool);
@@ -52,8 +74,8 @@ const breadcrumbSchema = {
   ]
 };
 ---
-<Layout title={`${tool.name} - Free Online Tool`} description={tool.description}>
-  <div class="shell py-5 text-sm text-[var(--muted)]"><a href="/">Home</a><span class="mx-2">/</span><a href={categoryPath}>{tool.category}</a><span class="mx-2">/</span>{tool.name}</div>
+<Layout title={tool.seoTitle ?? tool.name} description={tool.description}>
+  <div class="shell py-5 text-sm text-[var(--muted)]"><a href="/">Home</a><span class="mx-2">/</span><a href={`${categoryPath}/`}>{tool.category}</a><span class="mx-2">/</span>{tool.name}</div>
   <section class="shell grid gap-10 pb-16 pt-7 lg:grid-cols-[minmax(0,.82fr)_minmax(420px,1fr)] lg:gap-16">
     <div><p class="eyebrow">{tool.group}</p><h1 class="display mt-4 text-[clamp(2.4rem,6vw,4rem)]">{tool.name}</h1><p class="mt-5 text-lg leading-8 text-[var(--muted)]">{tool.description}</p><div class="mt-7 rounded-xl border bg-[var(--panel)] p-4 text-sm leading-6 text-[var(--muted)]" style="border-color:var(--line)"><strong class="text-[var(--text)]">Important:</strong> {medical ? 'This calculator provides an educational estimate and cannot replace advice, testing or diagnosis from a qualified healthcare professional.' : marketing ? 'Use campaign values from the same reporting period, attribution model, currency, and channel scope for a meaningful comparison.' : 'This is a planning estimate. Confirm rates, fees, taxes and eligibility rules with the relevant provider or authority.'}</div></div>
     <GeneralCalculator tool={tool} />

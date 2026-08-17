@@ -1,0 +1,76 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ToolCard from '../components/ToolCard.astro';
+import { tools } from '../data/tools';
+
+const categories = ['Core pace', 'Race day', 'Training', 'Specialized'] as const;
+const categoryDescriptions: Record<(typeof categories)[number], string> = {
+  'Core pace': 'Convert distance and elapsed time into pace, speed, finish time and even splits in mile or kilometer units.',
+  'Race day': 'Turn a goal time into practical checkpoints for common race distances, or project a finish from a pace you can sustain.',
+  'Training': 'Use a recent 5K result to estimate broad easy, long, tempo, threshold and interval ranges for different session goals.',
+  'Specialized': 'Translate treadmill speed, blend run/walk intervals, compare hills with grade-adjusted pace or normalize swim pace.',
+};
+const pageUrl = new URL('/running-calculators/', Astro.site).href;
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      'itemListElement': [
+        { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': new URL('/', Astro.site).href },
+        { '@type': 'ListItem', 'position': 2, 'name': 'Free Running Calculators', 'item': pageUrl },
+      ],
+    },
+    {
+      '@type': 'CollectionPage',
+      '@id': pageUrl,
+      'name': 'Free Running Calculators',
+      'url': pageUrl,
+      'description': 'Running calculators for pace, race splits, finish times, treadmill speed, run/walk intervals, hills and training ranges.',
+      'mainEntity': {
+        '@type': 'ItemList',
+        'numberOfItems': tools.length,
+        'itemListElement': tools.map((tool, index) => ({
+          '@type': 'ListItem',
+          'position': index + 1,
+          'name': tool.name,
+          'url': new URL(`/${tool.slug}/`, Astro.site).href,
+        })),
+      },
+    },
+  ],
+};
+---
+<Layout title="Free Running Calculators" description="Free running calculators for pace, race splits, finish times, treadmill speed, run/walk intervals, hills and training ranges.">
+  <section class="shell py-14 sm:py-20">
+    <div class="mb-6 text-sm text-[var(--muted)]"><a href="/">Home</a><span class="mx-2">/</span>Running calculators</div>
+    <p class="eyebrow">19 pace and training tools</p>
+    <h1 class="display mt-4 max-w-3xl text-4xl sm:text-5xl">Free Running Calculators</h1>
+    <p class="mt-5 max-w-3xl text-lg leading-8 text-[var(--muted)]">Choose a calculator around the number you already know and the result you need. You can convert a treadmill setting to outdoor pace, build race checkpoints, combine running and walking intervals, compare a hilly effort with flat pace, or estimate training ranges from a recent result.</p>
+    <div class="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <a class="panel p-5 transition hover:border-[var(--color-primary)]" href="/treadmill-pace-calculator/"><h2 class="font-semibold">Treadmill speed to pace</h2><p class="mt-2 text-sm leading-6 text-[var(--muted)]">Convert mph or km/h into minutes per mile and kilometer before an indoor workout.</p></a>
+      <a class="panel p-5 transition hover:border-[var(--color-primary)]" href="/marathon-pace-calculator/"><h2 class="font-semibold">Marathon pace and splits</h2><p class="mt-2 text-sm leading-6 text-[var(--muted)]">Turn a marathon goal into even pace and cumulative 5K checkpoints.</p></a>
+      <a class="panel p-5 transition hover:border-[var(--color-primary)]" href="/run-walk-pace-calculator/"><h2 class="font-semibold">Run/walk pacing</h2><p class="mt-2 text-sm leading-6 text-[var(--muted)]">Find a distance-weighted average from separate running and walking intervals.</p></a>
+      <a class="panel p-5 transition hover:border-[var(--color-primary)]" href="/grade-adjusted-pace-calculator/"><h2 class="font-semibold">Grade-adjusted pace</h2><p class="mt-2 text-sm leading-6 text-[var(--muted)]">Estimate an equivalent flat pace for an uphill or downhill effort.</p></a>
+      <a class="panel p-5 transition hover:border-[var(--color-primary)]" href="/training-pace-calculator/"><h2 class="font-semibold">Training pace ranges</h2><p class="mt-2 text-sm leading-6 text-[var(--muted)]">Estimate easy, long, tempo, threshold and interval ranges from a recent 5K.</p></a>
+    </div>
+  </section>
+
+  <section class="shell border-t pb-20 pt-12" style="border-color:var(--line)" aria-label="Running calculator catalog">
+    {categories.map((category) => (
+      <div class="mb-14">
+        <h2 class="display text-2xl">{category}</h2>
+        <p class="mb-6 mt-2 max-w-3xl text-sm leading-6 text-[var(--muted)]">{categoryDescriptions[category]}</p>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {tools.filter((tool) => tool.category === category).map((tool) => <ToolCard tool={tool} index={tools.indexOf(tool)} />)}
+        </div>
+      </div>
+    ))}
+    <div class="prose-copy mx-auto mt-6 max-w-3xl border-t pt-12" style="border-color:var(--line)">
+      <h2>Choose inputs that match the session</h2>
+      <p>Use a measured distance and complete elapsed time when reviewing a run. For race planning, begin with a recent performance under reasonably similar conditions. Training ranges are starting points rather than required targets; hills, heat, wind, fatigue and the purpose of the session can justify a slower pace.</p>
+      <p>Split tables assume an even pace, while grade-adjusted and run/walk results are models. Keep units consistent, preserve seconds when entering a time and compare the output with effort and recent training rather than relying on one number alone.</p>
+    </div>
+  </section>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+</Layout>

@@ -2,16 +2,58 @@
 import Layout from '../layouts/Layout.astro';
 import GeneralToolCard from '../components/GeneralToolCard.astro';
 import { financialGroups, financialTools } from '../data/calculatorCatalog';
+const groupDescriptions: Record<string, string> = {
+  'Mortgage & real estate': 'Estimate housing payments, affordability, amortization, refinancing and ownership costs before comparing loan offers or property scenarios.',
+  'Auto': 'Compare vehicle financing and leasing using price, term, rate, trade-in and other purchase assumptions.',
+  'Investment': 'Project interest, contributions, future value and returns while keeping rates, compounding and time horizons consistent.',
+  'Retirement': 'Explore contribution, income and withdrawal scenarios for long-term planning without treating projections as guaranteed outcomes.',
+  'Tax & salary': 'Convert pay and estimate taxes using current inputs; confirm tax rules and deductions with an authoritative source.',
+  'Loans & debt': 'Compare payments, interest and payoff timelines for personal borrowing, education costs, cards and debt repayment.',
+  'Other': 'Handle everyday calculations such as budgets, inflation, currency, depreciation, margins, discounts and leases.',
+};
+const pageUrl = new URL('/financial-calculators/', Astro.site).href;
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      'itemListElement': [
+        { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': new URL('/', Astro.site).href },
+        { '@type': 'ListItem', 'position': 2, 'name': 'Free Financial Calculators', 'item': pageUrl },
+      ],
+    },
+    {
+      '@type': 'CollectionPage',
+      '@id': pageUrl,
+      'name': 'Free Financial Calculators',
+      'url': pageUrl,
+      'description': 'Financial calculators for mortgages, loans, saving, investing, retirement, taxes, debt and everyday planning.',
+      'mainEntity': {
+        '@type': 'ItemList',
+        'numberOfItems': financialTools.length,
+        'itemListElement': financialTools.map((tool, index) => ({
+          '@type': 'ListItem',
+          'position': index + 1,
+          'name': tool.name,
+          'url': new URL(`/financial/${tool.slug}/`, Astro.site).href,
+        })),
+      },
+    },
+  ],
+};
 ---
 <Layout title="Free Financial Calculators" description="71 free financial calculators for mortgages, loans, investments, retirement, taxes, debt and business planning.">
   <section class="shell py-14 sm:py-20">
-    <p class="eyebrow">71 financial calculators</p><h1 class="display mt-4 max-w-3xl text-4xl sm:text-5xl">Make informed money decisions.</h1>
-    <p class="mt-5 max-w-2xl text-lg leading-8 text-[var(--muted)]">Explore 71 calculators for borrowing, saving, investing, retirement and everyday financial planning.</p>
+    <div class="mb-6 text-sm text-[var(--muted)]"><a href="/">Home</a><span class="mx-2">/</span>Financial calculators</div>
+    <p class="eyebrow">71 tools for planning and comparison</p><h1 class="display mt-4 max-w-3xl text-4xl sm:text-5xl">Free Financial Calculators</h1>
+    <p class="mt-5 max-w-3xl text-lg leading-8 text-[var(--muted)]">Choose a calculator that matches the decision in front of you. Start with the <a class="font-medium text-[var(--color-primary)]" href="/financial/mortgage-calculator/">mortgage calculator</a> for a payment including taxes and PMI, the <a class="font-medium text-[var(--color-primary)]" href="/financial/auto-loan-calculator/">auto loan calculator</a> for a vehicle purchase, or the <a class="font-medium text-[var(--color-primary)]" href="/financial/savings-calculator/">savings calculator</a> to test regular deposits and compound growth.</p>
+    <p class="mt-3 max-w-3xl text-sm leading-6 text-[var(--muted)]">Use current rates and fees where possible, then compare more than one scenario. These results support planning; they do not verify eligibility, future returns or tax treatment.</p>
     <label class="panel mt-8 block max-w-xl p-1.5"><span class="sr-only">Search financial calculators</span><input class="control border-0 shadow-none" type="search" placeholder="Search mortgage, loan, investment..." data-catalog-search /></label>
   </section>
   <section class="shell border-t pb-20 pt-10" style="border-color:var(--line)" data-catalog>
-    {financialGroups.map((group) => <div class="catalog-group mb-12"><h2 class="mb-4 text-lg font-semibold">{group}</h2><div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{financialTools.filter((tool) => tool.group === group).map((tool) => <GeneralToolCard tool={tool} />)}</div></div>)}
+    {financialGroups.map((group) => <div class="catalog-group mb-12"><h2 class="text-lg font-semibold">{group}</h2><p class="mb-4 mt-2 max-w-3xl text-sm leading-6 text-[var(--muted)]">{groupDescriptions[group]}</p><div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{financialTools.filter((tool) => tool.group === group).map((tool) => <GeneralToolCard tool={tool} />)}</div></div>)}
     <p class="hidden rounded-xl border bg-[var(--panel)] p-6 text-center text-sm text-[var(--muted)]" data-empty>No matching calculator found.</p>
   </section>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
 </Layout>
 <script>const input=document.querySelector<HTMLInputElement>('[data-catalog-search]');const empty=document.querySelector<HTMLElement>('[data-empty]');input?.addEventListener('input',()=>{let visible=0;document.querySelectorAll<HTMLElement>('[data-catalog] a').forEach(card=>{const match=card.textContent?.toLowerCase().includes(input.value.trim().toLowerCase())??false;card.classList.toggle('hidden',!match);if(match)visible++});document.querySelectorAll<HTMLElement>('.catalog-group').forEach(group=>group.classList.toggle('hidden',!group.querySelector('a:not(.hidden)')));empty?.classList.toggle('hidden',visible>0)});</script>

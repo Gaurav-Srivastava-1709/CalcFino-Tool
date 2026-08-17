@@ -12,20 +12,95 @@ export type GeneralKind =
 export interface GeneralTool {
   slug: string;
   name: string;
+  seoTitle?: string;
   category: 'Financial' | 'Health' | 'Marketing';
   group: string;
   kind: GeneralKind;
   description: string;
 }
 
-const make = (category: GeneralTool['category'], group: string, kind: GeneralKind, names: string[]): GeneralTool[] => names.map((name) => ({
-  name,
-  category,
-  group,
-  kind,
-  slug: name.toLowerCase().replace(/&/g, 'and').replace(/401k/g, '401k').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
-  description: `Use the free ${name.toLowerCase()} to get a clear estimate with adjustable inputs and instant results.`,
-}));
+const seoOverrides: Record<string, Pick<GeneralTool, 'seoTitle' | 'description'>> = {
+  'mortgage-calculator': {
+    seoTitle: 'Mortgage Calculator with Taxes, PMI & Extra Payments',
+    description: 'Estimate a mortgage payment with principal, interest, property taxes, insurance, PMI, HOA costs and optional extra payments, then review payoff timing and total cost.',
+  },
+  'auto-loan-calculator': {
+    seoTitle: 'Auto Loan Calculator with Trade-In, Tax & Negative Equity',
+    description: 'Estimate an auto loan payment using vehicle price, trade-in value, the amount still owed, sales tax, fees, incentives and your choice of upfront or financed costs.',
+  },
+  'cd-calculator': {
+    seoTitle: 'CD Calculator for Maturity Value & Withdrawal Penalty',
+    description: 'Estimate a certificate of deposit maturity balance, interest earned and the effect of an early withdrawal penalty using your deposit, annual rate and term.',
+  },
+  'savings-calculator': {
+    seoTitle: 'Savings Calculator with Monthly Deposits & Compound Growth',
+    description: 'Project how an initial balance and monthly deposits may grow with compound interest, and compare your contributions with estimated interest earned.',
+  },
+  'tdee-calculator': {
+    seoTitle: 'TDEE Calculator for Maintenance Calories & Weight Planning',
+    description: 'Estimate daily maintenance calories from activity level using Mifflin-St Jeor, Harris-Benedict or Katch-McArdle, with calorie targets for weight planning.',
+  },
+  'protein-calculator': {
+    seoTitle: 'Protein Calculator by Weight, Activity & Grams per Kg',
+    description: 'Estimate daily protein in grams from body weight and activity level, with the selected grams-per-kilogram target, a four-meal split and baseline comparison.',
+  },
+  'due-date-calculator': {
+    seoTitle: 'Due Date Calculator by LMP, Conception, Ultrasound or IVF',
+    description: 'Estimate a pregnancy due date and gestational age from the last menstrual period, conception date, ultrasound dating, IVF transfer or a known due date.',
+  },
+  'roas-calculator': {
+    seoTitle: 'ROAS Calculator for Return on Ad Spend',
+    description: 'Calculate return on ad spend from attributed revenue and advertising cost, with the ROAS ratio, percentage and revenue remaining after ad spend.',
+  },
+  'break-even-roas-calculator': {
+    seoTitle: 'Break-Even ROAS Calculator by Gross Margin',
+    description: 'Find the ROAS needed to cover advertising cost from gross margin, and see break-even revenue per dollar of spend and gross profit per order.',
+  },
+  'ad-spend-calculator': {
+    seoTitle: 'Ad Spend Calculator for Revenue & Target ROAS',
+    description: 'Calculate a maximum advertising budget from a revenue goal and target ROAS, including an average daily budget for the campaign period.',
+  },
+  'cac-calculator': {
+    seoTitle: 'CAC Calculator for Customer Acquisition Cost',
+    description: 'Calculate customer acquisition cost from total sales and marketing spend and the number of new customers acquired in the same period.',
+  },
+  'ltv-calculator': {
+    seoTitle: 'Customer Lifetime Value Calculator for Revenue & Gross Profit',
+    description: 'Estimate customer lifetime value from average order value, purchase frequency, customer lifespan and gross margin, with revenue and gross-profit views.',
+  },
+  'cpc-calculator': {
+    seoTitle: 'CPC Calculator for Cost per Click',
+    description: 'Calculate average cost per click from total campaign spend and clicks so you can compare paid traffic costs across aligned reporting periods.',
+  },
+  'cpm-calculator': {
+    seoTitle: 'CPM Calculator for Cost per 1,000 Impressions',
+    description: 'Calculate cost per thousand impressions from campaign spend and impression volume, with the corresponding cost for a single impression.',
+  },
+  'cpa-calculator': {
+    seoTitle: 'CPA Calculator for Cost per Acquisition',
+    description: 'Calculate cost per acquisition from campaign spend and attributed conversions using values from the same reporting and attribution period.',
+  },
+  'conversion-rate-calculator': {
+    seoTitle: 'Conversion Rate Calculator for Visitors & Conversions',
+    description: 'Calculate conversion rate from visitors and completed conversions, and see the average number of visitors required for each conversion.',
+  },
+  'profit-margin-calculator': {
+    seoTitle: 'Profit Margin Calculator for Gross & Net Margin',
+    description: 'Calculate gross margin, net profit margin and net profit from revenue, cost of goods sold and other operating expenses.',
+  },
+};
+
+const make = (category: GeneralTool['category'], group: string, kind: GeneralKind, names: string[]): GeneralTool[] => names.map((name) => {
+  const slug = name.toLowerCase().replace(/&/g, 'and').replace(/401k/g, '401k').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  return {
+    name,
+    category,
+    group,
+    kind,
+    slug,
+    ...(seoOverrides[slug] ?? { description: `Use the free ${name.toLowerCase()} to get a clear estimate with adjustable inputs and instant results.` }),
+  };
+});
 
 export const financialTools: GeneralTool[] = [
   ...make('Financial', 'Mortgage & real estate', 'mortgage', ['Mortgage Calculator']),
@@ -100,7 +175,7 @@ export const marketingTools: GeneralTool[] = [
     group: 'Customer economics',
     kind: 'ltv',
     slug: 'ltv-calculator',
-    description: 'Calculate customer lifetime value from average order value, purchase frequency, customer lifespan and gross margin.',
+    ...seoOverrides['ltv-calculator'],
   },
   ...make('Marketing', 'Campaign costs', 'cpc', ['CPC Calculator']),
   ...make('Marketing', 'Campaign costs', 'cpm', ['CPM Calculator']),
