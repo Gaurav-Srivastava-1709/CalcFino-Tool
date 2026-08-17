@@ -51,3 +51,11 @@ https://calcfinotools.pages.dev/sitemap-index.xml
 ```
 
 Do not add an `X-Robots-Tag: noindex` header to the `pages.dev` hostname while it is the site's only public address. If a custom domain is added later, update `site` in `astro.config.mjs` first, redirect the `pages.dev` hostname to the custom domain if possible, and then resubmit the sitemap under the new Search Console property.
+
+After deploying changed or new calculators, notify search engines that support IndexNow:
+
+```sh
+npm run seo:submit
+```
+
+This requests faster discovery. It does not create visits or guarantee indexing or rankings.
