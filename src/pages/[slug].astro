@@ -12,6 +12,31 @@ const isTraining = ['training', 'effort'].includes(tool.kind);
 const isSpecial = ['swim', 'treadmill', 'runwalk', 'grade'].includes(tool.kind);
 const faqs = getRunningFaqs(tool.slug);
 const pageUrl = new URL(`/${tool.slug}/`, Astro.site).href;
+
+const raceGoals: Record<string, number[]> = {
+  '5k-pace-calculator': [20, 25, 30, 35, 40].map((minutes) => minutes * 60),
+  '10k-pace-calculator': [40, 45, 50, 55, 60].map((minutes) => minutes * 60),
+  'half-marathon-pace-calculator': [90, 105, 120, 135, 150].map((minutes) => minutes * 60),
+  'marathon-pace-calculator': [180, 210, 240, 270, 300].map((minutes) => minutes * 60),
+};
+const goalSeconds = raceGoals[tool.slug];
+const formatDuration = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  return hours ? `${hours}:${String(minutes).padStart(2, '0')}:00` : `${minutes}:00`;
+};
+const formatPace = (seconds: number) => {
+  const rounded = Math.round(seconds);
+  return `${Math.floor(rounded / 60)}:${String(rounded % 60).padStart(2, '0')}`;
+};
+const goalRows = goalSeconds && tool.distanceKm
+  ? goalSeconds.map((finishSeconds) => ({
+      finishTime: formatDuration(finishSeconds),
+      perKm: formatPace(finishSeconds / tool.distanceKm!),
+      perMile: formatPace(finishSeconds / (tool.distanceKm! / 1.609344)),
+    }))
+  : [];
+
 const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((faq) => ({ '@type': 'Question', name: faq.question, acceptedAnswer: { '@type': 'Answer', text: faq.answer } })) };
 const softwareSchema = {
   '@context': 'https://schema.org',
@@ -22,11 +47,7 @@ const softwareSchema = {
   'operatingSystem': 'All',
   'applicationCategory': 'FitnessApplication',
   'browserRequirements': 'Requires HTML5. Requires JavaScript.',
-  'offers': {
-    '@type': 'Offer',
-    'price': '0',
-    'priceCurrency': 'USD'
-  }
+  'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' }
 };
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
@@ -66,6 +87,20 @@ const breadcrumbSchema = {
       {tool.kind === 'runwalk' && <p>The blended result is weighted by distance, not by simply averaging the two pace values. It calculates the distance covered during each running and walking segment, adds those distances, then divides total cycle time by total distance.</p>}
       {tool.kind === 'grade' && <p>The estimate uses a published-style polynomial energy-cost curve for slope. It compares the modeled cost at the entered gradient with level running, then expresses the effort as an equivalent flat pace. Very steep, technical or loose terrain will reduce accuracy.</p>}
       {isTraining && <p>The estimate begins with average pace from a recent 5K and applies a purpose-specific range. It is intentionally a range rather than a single mandatory number. A 5K result should be recent, accurately measured and representative of current fitness.</p>}
+
+      {goalRows.length > 0 && (
+        <section aria-labelledby="goal-pace-chart">
+          <h2 id="goal-pace-chart">Popular goal-time pace chart</h2>
+          <p>Use these even-pace benchmarks to sense-check a target before entering your exact goal above. Real races may require small adjustments for hills, weather, aid stations and course congestion.</p>
+          <div class="overflow-x-auto rounded-xl border" style="border-color:var(--line)">
+            <table class="w-full border-collapse text-left text-sm">
+              <caption class="sr-only">Popular {tool.name.toLowerCase()} finish times with pace per kilometer and mile</caption>
+              <thead class="bg-[var(--soft)] text-[var(--text)]"><tr><th class="p-4" scope="col">Finish time</th><th class="p-4" scope="col">Pace / km</th><th class="p-4" scope="col">Pace / mile</th></tr></thead>
+              <tbody>{goalRows.map((row) => <tr class="border-t" style="border-color:var(--line)"><th class="p-4 font-semibold text-[var(--text)]" scope="row">{row.finishTime}</th><td class="p-4">{row.perKm}</td><td class="p-4">{row.perMile}</td></tr>)}</tbody>
+            </table>
+          </div>
+        </section>
+      )}
 
       <h2>How to interpret your result</h2>
       <p>Treat the displayed number as a planning reference. Pace describes an average and does not show whether the effort was evenly distributed. Two runners can finish in the same time while using very different strategies. Review lap data and perceived effort alongside the final average whenever those details are available.</p>
