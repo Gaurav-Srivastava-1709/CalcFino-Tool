@@ -1,6 +1,6 @@
 # CalcFino Tools
 
-Static Astro 7 and Tailwind 4 website with 19 running, race, swimming, and training calculators.
+Static calculator website built with Astro 7, TypeScript, and Tailwind CSS 4. It contains approximately 127 browser-based tools across financial, health, marketing, running, race, swimming, and training topics.
 
 ## Local development
 
@@ -9,14 +9,13 @@ npm install
 npm run dev
 ```
 
-Quality checks:
+Run all quality checks:
 
 ```sh
-npm run check
-npm run build
+npm run validate
 ```
 
-The production output is written to `dist/`.
+This command runs Astro type checking, creates a production build, and validates rendered calculator content and SEO requirements. The production output is written to `dist/`.
 
 ## Environment
 
